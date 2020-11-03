@@ -250,4 +250,11 @@ class ExamController extends Controller
 
         return array('data'=>[$update],"msg"=>$uid."作答".$eid."完成");
     }
+//    用户作答完成，实现用户答案与正确答案的匹配
+//提供参数：用户id,试题exid,作答次数：num
+    public function actionCheckans()
+    {
+        $request = \Yii::$app->request();
+
+    }
 }

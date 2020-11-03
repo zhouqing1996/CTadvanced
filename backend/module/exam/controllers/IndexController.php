@@ -398,9 +398,10 @@ class IndexController extends Controller
                 }
                 $exname = $request->post('exname');
                 $auth = $request->post('auth');
+                $gdtime = $request->post('gdtime');
                 $createtime = date('Y-m-d H:i:s',time());
                 $insertexam = \Yii::$app->db->createCommand()->insert('exam',array('exid'=>$id,'exname'=>$exname,
-                    'createtime'=>$createtime,'auth'=>$auth,'exstatus'=>1))->execute();
+                    'createtime'=>$createtime,'auth'=>$auth,'exstatus'=>1,'gdtime'=>$gdtime))->execute();
                 if($insertexam)
                 {
                     return array("data"=>[$insertexam],"msg"=>"完成问卷试卷");
@@ -433,77 +434,162 @@ class IndexController extends Controller
             for($i=0;$i<count($Clist);$i++)
             {
                 $op = $Clist[$i]['cqcho1'].'---'.$Clist[$i]['cqcho2'].'---'.$Clist[$i]['cqcho3'].'---'.$Clist[$i]['cqcho4'];
-                $idc = (new Query())
+                $quesy = (new Query())
                     ->select("*")
                     ->from('chooseq')
-                    ->max('cqid');
-                $idc = $idc+1;
-                $updatec = \Yii::$app->db->createCommand()->insert('chooseq',
-                    array('cqid'=>$idc,'cqitem'=>$Clist[$i]['cqitem'],'cqcho'=>$op,'cqans'=>$Clist[$i]['cqans'],'cqtail'=>$Clist[$i]['cqtail'],
-                        'cqrem'=>$Clist[$i]['cqrem'],'cqstatus'=>1))->execute();
-                $insertc = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                    'qid' => $idc, 'qtypeid' => 1, 'exstatus' => 1))->execute();
-
+                    ->where(['cqitem'=>$Clist[$i]['cqitem']])
+                    ->andWhere(['cqtail'=>$Clist[$i]['cqtail']])
+                    ->andWhere(['cqcho'=>$op])
+                    ->andWhere(['cqrem'=>$Clist[$i]['cqrem']])
+                    ->one();
+                if($quesy)
+                {
+                    $insertc = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $quesy['cqid'], 'qtypeid' => 1, 'exstatus' => 1))->execute();
+                }
+                else{
+                    $idc = (new Query())
+                        ->select("*")
+                        ->from('chooseq')
+                        ->max('cqid');
+                    $idc = $idc+1;
+                    $updatec = \Yii::$app->db->createCommand()->insert('chooseq',
+                        array('cqid'=>$idc,'cqitem'=>$Clist[$i]['cqitem'],'cqcho'=>$op,'cqans'=>$Clist[$i]['cqans'],'cqtail'=>$Clist[$i]['cqtail'],
+                            'cqrem'=>$Clist[$i]['cqrem'],'cqstatus'=>1))->execute();
+                    $insertc = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $idc, 'qtypeid' => 1, 'exstatus' => 1))->execute();
+                }
             }
             for($i=0;$i<count($Flist);$i++)
             {
-                $idf = (new Query())
+                $q = (new Query())
                     ->select("*")
                     ->from('fillq')
-                    ->max('fqid');
-                $idf = $idf + 1;
-                $updatef = \Yii::$app->db->createCommand()->insert('fillq',
-                    array('fqid' => $idf, 'fqitem' => $Flist[$i]['fitem'], 'fqans' => $Flist[$i]['fans'], 'fqtail' => $Flist[$i]['ftail'],
-                        'fqrem' => $Flist[$i]['frem'], 'fqstatus' => 1))->execute();
-                $insertf = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                    'qid' => $idf, 'qtypeid' => 2, 'exstatus' => 1))->execute();
+                    ->where(['fqitem'=>$Flist[$i]['fitem']])
+                    ->andWhere(['fqans'=>$Flist[$i]['fans']])
+                    ->andWhere(['fqtail' => $Flist[$i]['ftail']])
+                    ->andWhere(['fqrem' => $Flist[$i]['frem']])
+                    ->one();
+                if($q)
+                {
+                    $insertf = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $q['fqid'], 'qtypeid' => 2, 'exstatus' => 1))->execute();
+                }
+                else{
+                    $idf = (new Query())
+                        ->select("*")
+                        ->from('fillq')
+                        ->max('fqid');
+                    $idf = $idf + 1;
+                    $updatef = \Yii::$app->db->createCommand()->insert('fillq',
+                        array('fqid' => $idf, 'fqitem' => $Flist[$i]['fitem'], 'fqans' => $Flist[$i]['fans'], 'fqtail' => $Flist[$i]['ftail'],
+                            'fqrem' => $Flist[$i]['frem'], 'fqstatus' => 1))->execute();
+                    $insertf = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $idf, 'qtypeid' => 2, 'exstatus' => 1))->execute();
+                }
             }
             for($i=0;$i<count($Jlist);$i++)
             {
-                $idj = (new Query())
-                    ->select("*")
+                $ans = $Jlist[$i]['jans'];
+                if($ans=="正确"||$ans=="对")
+                {
+                    $ans =1;
+                }
+                else{
+                    $ans=0;
+                }
+                $q = (new Query())
+                    ->select('*')
                     ->from('judge')
-                    ->max('jqid');
-                $idj = $idj + 1;
-                $updatej = \Yii::$app->db->createCommand()->insert('judge',
-                    array('jqid' => $idj, 'jqitem' => $Jlist[$i]['jitem'], 'jqans' => $Jlist[$i]['jans'], 'jqtail' => $Jlist[$i]['jtail'],
-                        'jqrem' => $Jlist[$i]['jrem'], 'jqstatus' => 1))->execute();
-                $insertj = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                    'qid' => $idj, 'qtypeid' => 5, 'exstatus' => 1))->execute();
+                    ->where(['jqitem' => $Jlist[$i]['jitem']])
+                    ->andWhere(['jqans' => $ans])
+                    ->andWhere(['jqtail' => $Jlist[$i]['jtail']])
+                    ->andWhere(['jqrem' => $Jlist[$i]['jrem']])
+                    ->one();
+                if($q)
+                {
+                    $insertj = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $q['jqid'], 'qtypeid' => 5, 'exstatus' => 1))->execute();
+                }
+                else{
+                    $idj = (new Query())
+                        ->select("*")
+                        ->from('judge')
+                        ->max('jqid');
+                    $idj = $idj + 1;
+                    $updatej = \Yii::$app->db->createCommand()->insert('judge',
+                        array('jqid' => $idj, 'jqitem' => $Jlist[$i]['jitem'], 'jqans' => $Jlist[$i]['jans'], 'jqtail' => $Jlist[$i]['jtail'],
+                            'jqrem' => $Jlist[$i]['jrem'], 'jqstatus' => 1))->execute();
+                    $insertj = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $idj, 'qtypeid' => 5, 'exstatus' => 1))->execute();
+                }
 
             }
             for($i=0;$i<count($Plist);$i++)
             {
-                $idp = (new Query())
-                    ->select("*")
+                $q = (new Query())
+                    ->select('*')
                     ->from('program')
-                    ->max('pqid');
-                $idp = $idp + 1;
-                $updatep = \Yii::$app->db->createCommand()->insert('program',
-                    array('pqid' => $idp, 'pqitem' => $Plist[$i]['pitem'], 'pqans' => $Plist[$i]['pans'], 'pqtail' => $Plist[$i]['ptail'],
-                        'pqrem' => $Plist[$i]['prem'], 'pqstatus' => 1))->execute();
-                $insertp = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                    'qid' => $idp, 'qtypeid' => 3, 'exstatus' => 1))->execute();
+                    ->where(['pqitem' => $Plist[$i]['pitem']])
+                    ->andWhere(['pqans' => $Plist[$i]['pans']])
+                    ->andWhere(['pqtail' => $Plist[$i]['ptail']])
+                    ->andWhere(['pqrem' => $Plist[$i]['prem']])
+                    ->one();
+                if($q)
+                {
+                    $insertp = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $q['pqid'], 'qtypeid' => 3, 'exstatus' => 1))->execute();
+                }
+                else{
+                    $idp = (new Query())
+                        ->select("*")
+                        ->from('program')
+                        ->max('pqid');
+                    $idp = $idp + 1;
+                    $updatep = \Yii::$app->db->createCommand()->insert('program',
+                        array('pqid' => $idp, 'pqitem' => $Plist[$i]['pitem'], 'pqans' => $Plist[$i]['pans'], 'pqtail' => $Plist[$i]['ptail'],
+                            'pqrem' => $Plist[$i]['prem'], 'pqstatus' => 1))->execute();
+                    $insertp = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $idp, 'qtypeid' => 3, 'exstatus' => 1))->execute();
+                }
             }
             for($i=0;$i<count($CMlist);$i++)
             {
-                $idcm = (new Query())
+                $op = $CMlist[$i]['mcho1'].'---'.$CMlist[$i]['mcho2'].'---'.$CMlist[$i]['mcho3'].'---'.$CMlist[$i]['mcho4'];
+                $q = (new Query())
                     ->select("*")
                     ->from('choosem')
-                    ->max('mqid');
-                $idcm = $idcm+1;
-                $op = $CMlist[$i]['mcho1'].'---'.$CMlist[$i]['mcho2'].'---'.$CMlist[$i]['mcho3'].'---'.$CMlist[$i]['mcho4'];
-                $updatecm = \Yii::$app->db->createCommand()->insert('choosem',
-                    array('mqid'=>$idcm,'mqitem'=>$CMlist[$i]['mitem'],'mqcho'=>$op,'mqans'=>$CMlist[$i]['mans'],'mqtail'=>$CMlist[$i]['mtail'],
-                        'mqrem'=>$CMlist[$i]['mrem'],'mqstatus'=>1))->execute();
-                $insertm = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                    'qid' => $idcm, 'qtypeid' => 4, 'exstatus' => 1))->execute();
+                    ->where(['mqitem'=>$CMlist[$i]['mitem']])
+                    ->andWhere(['mqcho'=>$op])
+                    ->andWhere(['mqans'=>$CMlist[$i]['mans']])
+                    ->andWhere(['mqtail'=>$CMlist[$i]['mtail']])
+                    ->andWhere(['mqrem'=>$CMlist[$i]['mrem']])
+                    ->one();
+                if($q)
+                {
+                    $insertm = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $q['mqid'], 'qtypeid' => 4, 'exstatus' => 1))->execute();
+                }
+                else{
+                    $idcm = (new Query())
+                        ->select("*")
+                        ->from('choosem')
+                        ->max('mqid');
+                    $idcm = $idcm+1;
 
+                    $updatecm = \Yii::$app->db->createCommand()->insert('choosem',
+                        array('mqid'=>$idcm,'mqitem'=>$CMlist[$i]['mitem'],'mqcho'=>$op,'mqans'=>$CMlist[$i]['mans'],'mqtail'=>$CMlist[$i]['mtail'],
+                            'mqrem'=>$CMlist[$i]['mrem'],'mqstatus'=>1))->execute();
+                    $insertm = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
+                        'qid' => $idcm, 'qtypeid' => 4, 'exstatus' => 1))->execute();
+                }
             }
             $auth = $request->post('auth');
             $createtime = date('Y-m-d H:i:s',time());
+//            $gdtime=$request->post('gdtime');
+            $gdtime='120';
             $insertexam = \Yii::$app->db->createCommand()->insert('exam',array('exid'=>$id,'exname'=>$exname,
-                'createtime'=>$createtime,'auth'=>$auth,'exstatus'=>1))->execute();
+                'createtime'=>$createtime,'auth'=>$auth,'exstatus'=>1,'gdtime'=>$gdtime))->execute();
             if($insertexam)
             {
                 return array("data"=>[$insertexam],"msg"=>"完成创建试卷");
