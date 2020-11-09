@@ -245,16 +245,586 @@ class ExamController extends Controller
                 array('id'=>$id,'userid'=>$uid,'exid'=>$eid,'qid'=>$jqid,'qtypeid'=>$jqtypeid,
                     'ans'=>$jqans,'grade'=>'','finishtime'=>$finishtime, 'status'=>1,'ctime'=>$sctime))->execute();
         }
-        $update = \Yii::$app->db->createCommand()->insert('useranss',
-            array('id'=>$id,'userid'=>$uid,'exid'=>$eid,'grade'=>'','finishtime'=>$finishtime, 'status'=>1,'ctime'=>$ctime))->execute();
+        $n = $this->Checkans($id,$uid,$eid);
+        if($n!=0)
+        {
+            $update = \Yii::$app->db->createCommand()->insert('useranss',
+                array('id'=>$id,'userid'=>$uid,'exid'=>$eid,'grade'=>$n,'finishtime'=>$finishtime, 'status'=>1,'ctime'=>$ctime))->execute();
 
-        return array('data'=>[$update],"msg"=>$uid."作答".$eid."完成");
+            return array('data'=>[$update],"msg"=>$uid."作答".$eid."完成");
+        }
     }
 //    用户作答完成，实现用户答案与正确答案的匹配
 //提供参数：用户id,试题exid,作答次数：num
-    public function actionCheckans()
+    public function Checkans($num,$uid,$eid)
     {
-        $request = \Yii::$app->request();
+//        $request = \Yii::$app->request;
+//        $num = $request->post('num');
+//        $uid = $request->post('uid');
+//        $eid = $request->post('eid');
+        $query= (new Query())
+            ->select('*')
+            ->from('userans')
+            ->where(['userid'=>$uid])
+            ->andWhere(['exid'=>$eid])
+            ->andWhere(['id'=>$num])
+            ->all();
+//        初始判分，每对一题，增加1
+        $x = 0;
+
+        if($query)
+        {
+            for($i=0;$i<count($query);$i++)
+            {
+//                不同的题型
+                if($query[$i]['qtypeid']==1)
+                {
+//                    选择题
+                    $qc = (new Query())
+                        ->select('*')
+                        ->from('chooseq')
+                        ->where(['cqid'=>$query[$i]['qid']])
+                        ->one();
+//                    匹配答案，如果答案正确则返回值为1，错误为0
+                    if($query[$i]['ans']==$qc['cqans'])
+                    {
+                        $x = $x+1;
+                       $updatec = \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
+                           ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>1,'qid'=>$query[$i]['qid']])->execute();
+                    }
+                    else{
+                        $updatec = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
+                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>1,'qid'=>$query[$i]['qid']])->execute();
+                    }
+
+                }
+                else if($query[$i]['qtypeid']==2)
+                {
+//                    填空题
+                    $qf = (new Query())
+                        ->select('*')
+                        ->from('fillq')
+                        ->where(['fqid'=>$query[$i]['qid']])
+                        ->one();
+//                    匹配答案，如果答案正确则返回值为1，错误为0
+                    if($query[$i]['ans']==$qf['fqans'])
+                    {
+                        $x = $x+1;
+                        $updatef = \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
+                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>2,'qid'=>$query[$i]['qid']])->execute();
+                    }
+                    else{
+                        $updatef = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
+                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>2,'qid'=>$query[$i]['qid']])->execute();
+                    }
+                }
+                else if($query[$i]['qtypeid']==3)
+                {
+//                  程序题
+                    $qp = (new Query())
+                        ->select('*')
+                        ->from('programq')
+                        ->where(['pqid'=>$query[$i]['qid']])
+                        ->one();
+//                    匹配答案，如果答案正确则返回值为1，错误为0
+                    if($query[$i]['ans']==$qp['pqans'])
+                    {
+                        $x = $x+1;
+                        $updatep = \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
+                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>3,'qid'=>$query[$i]['qid']])->execute();
+                    }
+                    else{
+                        $updatep = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
+                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>3,'qid'=>$query[$i]['qid']])->execute();
+                    }
+
+                }
+                else if($query[$i]['qtypeid']==4)
+                {
+//                    多选题
+                    $qm= (new Query())
+                        ->select('*')
+                        ->from('choosem')
+                        ->where(['mqid'=>$query[$i]['qid']])
+                        ->one();
+                    $s = $qm['mqans'];
+                    $exp1 = explode('---',$s);
+                    $exp2 = explode('---',$query[$i]['ans']);
+                    sort($exp2);
+                    sort($exp1);
+                    if($exp1===$exp2)
+                    {
+                        $mgrade = 1;
+                    }
+                    else{
+                        $mgrade = 0;
+                    }
+//                    匹配答案，如果答案正确则返回值为1，错误为0
+                    $updatem= \Yii::$app->db->createCommand()->update('userans',['grade'=>$mgrade],
+                        ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>4,'qid'=>$query[$i]['qid']])->execute();
+//                    if($mgrade==1)
+//                    {
+//                        $x = $x+1;
+//                        $updatem= \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
+//                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>4,'qid'=>$query[$i]['qid']])->execute();
+//                    }
+//                    else{
+//                        $updatem = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
+//                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>4,'qid'=>$query[$i]['qid']])->execute();
+//                    }
+
+                }
+                else if($query[$i]['qtypeid']==5)
+                {
+//                  判断题
+                    $qj = (new Query())
+                        ->select('*')
+                        ->from('judge')
+                        ->where(['jqid'=>$query[$i]['qid']])
+                        ->one();
+//                    匹配答案，如果答案正确则返回值为1，错误为0
+                    if($query[$i]['ans']==$qj['jqans'])
+                    {
+                        $x = $x+1;
+                        $updatej = \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
+                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>5,'qid'=>$query[$i]['qid']])->execute();
+                    }
+                    else{
+                        $updatej = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
+                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>5,'qid'=>$query[$i]['qid']])->execute();
+                    }
+                }
+            }
+            return $x;
+//            array('data'=>$x,'msg'=>'判分完成');
+        }
+        else{
+            return 0;
+//            array('data'=>[],'msg'=>'没有找到该试卷');
+        }
 
     }
+//    获取试卷名字
+    public function Examname($eid)
+    {
+        $query = (new Query())
+            ->select('*')
+            ->from('exam')
+            ->where(['exid'=>$eid])
+            ->one();
+        if($query)
+        {
+            return $query['exname'];
+        }
+        else{
+            return array('data'=>[],'msg'=>'没有该试卷');
+        }
+    }
+//    获取用户作答的所有信息
+//提供参数 用户id:uid
+    public function actionUserresult()
+    {
+        $request = \Yii::$app->request;
+        $uid = $request->post('uid');
+        $query = (new Query())
+            ->select('*')
+            ->from('useranss')
+            ->where(['userid'=>$uid])
+            ->andWhere(['status'=>1])
+            ->all();
+        if($query)
+        {
+            for($i=0;$i<count($query);$i++)
+            {
+                $exname = $this->Examname($query[$i]['exid']);
+                $query[$i]['exname'] = $exname;
+            }
+            return array('data'=>$query,'msg'=>'查找成功');
+        }
+        else{
+            return array('data'=>[],'msg'=>'该用户没有作答');
+        }
+    }
+//    用户作答试卷的模糊查找
+//提供参数：搜索内容：name
+//         用户id:uid
+    public function actionUserqueryname()
+    {
+        $request = \Yii::$app->request;
+        $uid = $request->post('uid');
+        $name = $request->post('name');
+        $query = (new Query())
+            ->select('*')
+            ->from('useranss')
+            ->where(['userid'=>$uid])
+            ->andWhere(['status'=>1])
+            ->all();
+        $list = [];
+        if($query)
+        {
+            for($i=0;$i<count($query);$i++)
+            {
+//                问卷标题
+                $e = (new Query())
+                    ->select('*')
+                    ->from('exam')
+                    ->where(['exid'=>$query[$i]['exid']])
+                    ->andwhere(['or',
+                        ['like','exname',$name],])
+                    ->all();
+                if($e)
+                {
+                    $exname = $this->Examname($query[$i]['exid']);
+                    $query[$i]['exname'] = $exname;
+                    array_push($query[$i],$list);
+                }
+//                题目
+//                选择题
+                $ec = (new Query())
+                    ->select('*')
+                    ->from('examtail')
+                    ->where(['exid'=>$query[$i]['exid']])
+                    ->andWhere(['qtypeid'=>1])
+                    ->all();
+                if($ec)
+                {
+                    for($j=0;$j<count($ec);$j++)
+                    {
+                        $qc = (new Query())
+                            ->select("*")
+                            ->from('chooseq')
+                            ->where(['cqid'=>$ec[$j]['qid']])
+                            ->andWhere(['or',
+                                ['like','cqitem',$name],
+                                ['like','cqcho',$name],
+                            ])
+                            ->all();
+                        if($qc)
+                        {
+                            $exname = $this->Examname($query[$i]['exid']);
+                            $query[$i]['exname'] = $exname;
+                            array_push($query[$i],$list);
+                        }
+                    }
+                }
+//              填空题
+                $ef = (new Query())
+                    ->select('*')
+                    ->from('examtail')
+                    ->where(['exid'=>$query[$i]['exid']])
+                    ->andWhere(['qtypeid'=>2])
+                    ->all();
+                if($ef)
+                {
+                    for($j=0;$j<count($ef);$j++)
+                    {
+                        $qf = (new Query())
+                            ->select("*")
+                            ->from('fillq')
+                            ->where(['fqid'=>$ec[$j]['qid']])
+                            ->andWhere(['or',
+                                ['like','fqitem',$name],
+                            ])
+                            ->all();
+                        if($qf)
+                        {
+                            $exname = $this->Examname($query[$i]['exid']);
+                            $query[$i]['exname'] = $exname;
+                            array_push($query[$i],$list);
+                        }
+                    }
+                }
+//               判断题
+                $ej = (new Query())
+                    ->select('*')
+                    ->from('examtail')
+                    ->where(['exid'=>$query[$i]['exid']])
+                    ->andWhere(['qtypeid'=>5])
+                    ->all();
+                if($ej)
+                {
+                    for($j=0;$j<count($ej);$j++)
+                    {
+                        $qc = (new Query())
+                            ->select("*")
+                            ->from('judge')
+                            ->where(['jqid'=>$ec[$j]['qid']])
+                            ->andWhere(['or',
+                                ['like','jqitem',$name],
+                            ])
+                            ->all();
+                        if($qc)
+                        {
+                            $exname = $this->Examname($query[$i]['exid']);
+                            $query[$i]['exname'] = $exname;
+                            array_push($query[$i],$list);
+                        }
+                    }
+                }
+//                程序题
+                $ep = (new Query())
+                    ->select('*')
+                    ->from('examtail')
+                    ->where(['exid'=>$query[$i]['exid']])
+                    ->andWhere(['qtypeid'=>3])
+                    ->all();
+                if($ep)
+                {
+                    for($j=0;$j<count($ep);$j++)
+                    {
+                        $qp = (new Query())
+                            ->select("*")
+                            ->from('program')
+                            ->where(['pqid'=>$ec[$j]['qid']])
+                            ->andWhere(['or',
+                                ['like','pqitem',$name],
+                            ])
+                            ->all();
+                        if($qp)
+                        {
+                            $exname = $this->Examname($query[$i]['exid']);
+                            $query[$i]['exname'] = $exname;
+                            array_push($query[$i],$list);
+                        }
+                    }
+                }
+//                多选题
+                $em = (new Query())
+                    ->select('*')
+                    ->from('examtail')
+                    ->where(['exid'=>$query[$i]['exid']])
+                    ->andWhere(['qtypeid'=>4])
+                    ->all();
+                if($em)
+                {
+                    for($j=0;$j<count($em);$j++)
+                    {
+                        $qm = (new Query())
+                            ->select("*")
+                            ->from('choosem')
+                            ->where(['mqid'=>$ec[$j]['qid']])
+                            ->andWhere(['or',
+                                ['like','mqitem',$name],
+                                ['like','mqcho',$name],
+                            ])
+                            ->all();
+                        if($qm)
+                        {
+                            $exname = $this->Examname($query[$i]['exid']);
+                            $query[$i]['exname'] = $exname;
+                            array_push($query[$i],$list);
+                        }
+                    }
+                }
+            }
+            return array('data'=>$list,'msg'=>$name.'查找成功');
+        }
+        else{
+            return array('data'=>[],'msg'=>'该用户没有作答');
+        }
+    }
+
+//    获取用户作答的某一次测试的详细结果
+//      提供参数：uid:用户id,eid:试卷id,测试次数：num
+    public function actionGetuserdetail()
+    {
+        $request = \Yii::$app->request;
+        $uid = $request->post('uid');
+        $eid = $request->post('eid');
+        $num = $request->post('num');
+//        先查找该试卷包含的问题题目
+        $query = (new Query())
+            ->select('*')
+            ->from('exam')
+            ->where(['exid'=>$eid])
+            ->one();
+//        全部的内容：题目内容，用户做答情况
+//        item:题干
+//        cho:选项
+//        ans:答案
+//        rem:相关知识
+//        tail:详解
+//        uans:用户作答答案
+//        flag:正误标志
+        if ($query)
+        {
+            //            查找该试题的全部题目
+            $querys = (new Query())
+                ->select('*')
+                ->from('examtail')
+                ->where(['exid'=>$eid])
+                ->all();
+//            该试题的试题数
+            $exNum = count($querys);
+            $Num = (new Query())
+                ->select('*')
+                ->from('useranss')
+                ->where(['id'=>$num])
+                ->andWhere(['userid'=>$uid])
+                ->andWhere(['exid'=>$eid])
+                ->one();
+//            答对试题数
+            $corNum = $Num['grade'];
+            $list = [];
+            $j =0;
+            for($i=0;$i<count($querys);$i++)
+            {
+//                不同题目进行判别
+//                选择题
+                if($querys[$i]['qtypeid']==1)
+                {
+                    $qc = (new Query())
+                        ->select('*')
+                        ->from('chooseq')
+                        ->where(['cqid'=>$querys[$i]['qid']])
+                        ->one();
+                    $list[$j]['type']= 1;
+                    $list[$j]['item'] = $qc['cqitem'];
+                    $list[$j]['cho'] = $qc['cqcho'];
+                    $list[$j]['ans'] =$qc['cqans'];
+                    $list[$j]['rem'] = $qc['cqrem'];
+                    $list[$j]['tail'] = $qc['cqtail'];
+                    $c = (new Query())
+                        ->select('*')
+                        ->from('userans')
+                        ->where(['exid'=>$eid])
+                        ->andWhere(['userid'=>$uid])
+                        ->andWhere(['id'=>$num])
+                        ->andWhere(['qtypeid'=>1])
+                        ->andWhere(['qid'=>$querys[$i]['qid']])
+                        ->one();
+                    $list[$j]['uans'] = $c['ans'];
+                    $list[$j]['flag'] = $c['grade'];
+                    $j = $j+1;
+                }
+//                填空题
+                else if($querys[$i]['qtypeid']==2)
+                {
+                    $qf = (new Query())
+                        ->select('*')
+                        ->from('fillq')
+                        ->where(['fqid'=>$querys[$i]['qid']])
+                        ->one();
+                    $list[$j]['type']= 2;
+                    $list[$j]['item'] = $qf['fqitem'];
+                    $list[$j]['ans'] =$qf['fqans'];
+                    $list[$j]['rem'] = $qf['fqrem'];
+                    $list[$j]['tail'] = $qf['fqtail'];
+                    $f = (new Query())
+                        ->select('*')
+                        ->from('userans')
+                        ->where(['exid'=>$eid])
+                        ->andWhere(['userid'=>$uid])
+                        ->andWhere(['id'=>$num])
+                        ->andWhere(['qtypeid'=>2])
+                        ->andWhere(['qid'=>$querys[$i]['qid']])
+                        ->one();
+                    $list[$j]['uans'] = $f['ans'];
+                    $list[$j]['flag'] = $f['grade'];
+                    $j = $j+1;
+                }
+//                程序题
+                else if($querys[$i]['qtypeid']==3)
+                {
+                    $qp = (new Query())
+                        ->select('*')
+                        ->from('program')
+                        ->where(['pqid'=>$querys[$i]['qid']])
+                        ->one();
+                    $list[$j]['type']= 3;
+                    $list[$j]['item'] = $qp['pqitem'];
+                    $list[$j]['ans'] =$qp['pqans'];
+                    $list[$j]['rem'] = $qp['pqrem'];
+                    $list[$j]['tail'] = $qp['pqtail'];
+                    $p = (new Query())
+                        ->select('*')
+                        ->from('userans')
+                        ->where(['exid'=>$eid])
+                        ->andWhere(['userid'=>$uid])
+                        ->andWhere(['id'=>$num])
+                        ->andWhere(['qtypeid'=>3])
+                        ->andWhere(['qid'=>$querys[$i]['qid']])
+                        ->one();
+                    $list[$j]['uans'] = $p['ans'];
+                    $list[$j]['flag'] = $p['grade'];
+                    $j = $j+1;
+                }
+//                多选题
+                else if($querys[$i]['qtypeid']==4)
+                {
+                    $qm = (new Query())
+                        ->select('*')
+                        ->from('choosem')
+                        ->where(['mqid'=>$querys[$i]['qid']])
+                        ->one();
+                    $list[$j]['type']= 4;
+                    $list[$j]['item'] = $qm['mqitem'];
+                    $list[$j]['cho'] = $qm['mqcho'];
+                    $list[$j]['ans'] =$qm['mqans'];
+                    $list[$j]['rem'] = $qm['mqrem'];
+                    $list[$j]['tail'] = $qm['mqtail'];
+                    $m = (new Query())
+                        ->select('*')
+                        ->from('userans')
+                        ->where(['exid'=>$eid])
+                        ->andWhere(['userid'=>$uid])
+                        ->andWhere(['id'=>$num])
+                        ->andWhere(['qtypeid'=>4])
+                        ->andWhere(['qid'=>$querys[$i]['qid']])
+                        ->one();
+                    if($m)
+                    {
+                        $list[$j]['uans'] = $m['ans'];
+                        $list[$j]['flag'] = $m['grade'];
+                        $j = $j+1;
+                    }
+                    else{
+                        $list[$j]['uans'] = '';
+                        $list[$j]['flag'] = '';
+                        $j = $j+1;
+                    }
+                }
+//                判断题
+                else if($querys[$i]['qtypeid']==5)
+                {
+                    $qj = (new Query())
+                        ->select('*')
+                        ->from('judge')
+                        ->where(['jqid'=>$querys[$i]['qid']])
+                        ->one();
+                    $list[$j]['type']= 5;
+                    $list[$j]['item'] = $qj['jqitem'];
+                    $list[$j]['ans'] =$qj['jqans'];
+                    $list[$j]['rem'] = $qj['jqrem'];
+                    $list[$j]['tail'] = $qj['jqtail'];
+                    $jc= (new Query())
+                        ->select('*')
+                        ->from('userans')
+                        ->where(['exid'=>$eid])
+                        ->andWhere(['userid'=>$uid])
+                        ->andWhere(['id'=>$num])
+                        ->andWhere(['qtypeid'=>5])
+                        ->andWhere(['qid'=>$querys[$i]['qid']])
+                        ->one();
+                    if($jc)
+                    {
+                        $list[$j]['uans'] = $jc['ans'];
+                        $list[$j]['flag'] = $jc['grade'];
+                        $j = $j+1;
+                    }
+                    else{
+                        $list[$j]['uans'] = '';
+                        $list[$j]['flag'] = '';
+                        $j = $j+1;
+                    }
+
+                }
+            }
+            return array('data'=>[$list,$query,$exNum,$corNum],'msg'=>'获取成功');
+        }
+        else{
+            return array('data'=>[],'msg'=>'没有该试卷');
+        }
+    }
+
 }

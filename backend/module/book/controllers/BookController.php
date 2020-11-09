@@ -89,6 +89,7 @@ class BookController extends Controller
         $publish = $request->post('publish');
         $author=$request->post("author");
         $about=$request->post("about");
+        $auth = $request->post('auth');
         $bookid = (new Query())
             ->select('*')
             ->from('book')
@@ -105,7 +106,7 @@ class BookController extends Controller
             return array("data"=>[$query],"msg"=>"该图书已经添加过了");
         }
         $insertU = \Yii::$app->db->createCommand()->insert('book',array('bookid'=>$bookid,'bookname'=>$bookname,'publish'=>$publish,'author'=>$author,
-            'about'=>$about,'status'=>1))->execute();
+            'about'=>$about,'status'=>1,'userid'=>$auth))->execute();
         if($insertU)
         {
             return array("data"=>[$bookname,$bookid],"msg"=>"图书添加成功");
@@ -126,6 +127,7 @@ class BookController extends Controller
         $request=\Yii::$app->request;
         $bookid=$request->post("bookid");
         $flag=$request->post('flag');
+        $auth = $request->post('auth');
         if($flag==1)
         {
             $query = (new Query())
@@ -136,7 +138,7 @@ class BookController extends Controller
                 ->one();
             if($query)
             {
-                $updateU = \Yii::$app->db->createCommand()->update('book', ['status' => 0], 'bookid=:bookid',[':bookid'=>$bookid])->execute();
+                $updateU = \Yii::$app->db->createCommand()->update('book', ['status' => 0,'userid'=>$auth], 'bookid=:bookid',[':bookid'=>$bookid])->execute();
                 if($updateU)
                 {
                     return array("data"=>[$query,$updateU],"msg"=>"该图书已删除");
@@ -190,6 +192,7 @@ class BookController extends Controller
         $request = \Yii::$app->request;
         $flag = $request->post('flag');
         $bookid = $request->post('bookid');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('book')
@@ -198,7 +201,7 @@ class BookController extends Controller
         if ($query) {
             if ($flag == 1) {
                 $bookname = $request->post('bookname');
-                $updateU = \Yii::$app->db->createCommand()->update('book', ['bookname' => $bookname], "bookid={$bookid}")->execute();
+                $updateU = \Yii::$app->db->createCommand()->update('book', ['bookname' => $bookname,'userid'=>$auth], "bookid={$bookid}")->execute();
                 if ($updateU) {
                     return array("data" => [$query, $updateU], "msg" => "该图书名修改成功");
                 } else {
@@ -206,7 +209,7 @@ class BookController extends Controller
                 }
             } else if ($flag == 2) {
                 $publish = $request->post('publish');
-                $updateU = \Yii::$app->db->createCommand()->update('book', ['publish' => $publish], "bookid={$bookid}")->execute();
+                $updateU = \Yii::$app->db->createCommand()->update('book', ['publish' => $publish,'userid'=>$auth], "bookid={$bookid}")->execute();
                 if ($updateU) {
                     return array("data" => [$query, $updateU], "msg" => "该图书出版社修改成功");
                 } else {
@@ -214,7 +217,7 @@ class BookController extends Controller
                 }
             } else if ($flag == 3) {
                 $author = $request->post('author');
-                $updateU = \Yii::$app->db->createCommand()->update('book', ['author' => $author], "bookid={$bookid}")->execute();
+                $updateU = \Yii::$app->db->createCommand()->update('book', ['author' => $author,'userid'=>$auth], "bookid={$bookid}")->execute();
                 if ($updateU) {
                     return array("data" => [$query, $updateU], "msg" => "该图书作者修改成功");
                 } else {
@@ -222,14 +225,14 @@ class BookController extends Controller
                 }
             } else if ($flag == 4) {
                 $about = $request->post('about');
-                $updateU = \Yii::$app->db->createCommand()->update('book', ['about' => $about], "bookid={$bookid}")->execute();
+                $updateU = \Yii::$app->db->createCommand()->update('book', ['about' => $about,'userid'=>$auth], "bookid={$bookid}")->execute();
                 if ($updateU) {
                     return array("data" => [$query, $updateU], "msg" => "该图书关于修改成功");
                 } else {
                     return array("data" => [$query, $updateU], "msg" => "该图书关于已经修改");
                 }
             } else if ($flag == 5) {
-                $updateU = \Yii::$app->db->createCommand()->update('book', ['status' => 1], "bookid={$bookid}")->execute();
+                $updateU = \Yii::$app->db->createCommand()->update('book', ['status' => 1,'userid'=>$auth], "bookid={$bookid}")->execute();
                 if ($updateU) {
                     return array("data" => [$query, $updateU], "msg" => "该图书状态修改成功");
                 } else {
@@ -254,6 +257,7 @@ class BookController extends Controller
             $publish = isset($data[$i]['publish'])?$data[$i]['publish']:"";
             $author = isset($data[$i]['author'])?$data[$i]['author']:"";
             $about = isset($data[$i]['about'])?$data[$i]['about']:"";
+            $auth = isset($data[$i]['auth'])?$data[$i]['auth']:"";
             $query = (new Query())
                 ->select("*")
                 ->from('book')
@@ -268,7 +272,7 @@ class BookController extends Controller
             if($query == null)
             {
                 $insertU = \Yii::$app->db->createCommand()->insert('book',array('bookid'=>$id,'bookname'=>$name,'publish'=>$publish,'author'=>$author,
-                    'about'=>$about,'status'=>1))->execute();
+                    'about'=>$about,'status'=>1,'userid'=>$auth))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

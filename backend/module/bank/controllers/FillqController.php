@@ -95,6 +95,7 @@ class FillqController extends Controller
         $ans = $request->post('ans');
         $tail = $request->post('tail');
         $rem = $request->post('rem');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('fillq')
@@ -105,7 +106,7 @@ class FillqController extends Controller
         } else {
             $updatec = \Yii::$app->db->createCommand()->insert('fillq',
                 array('fqid' => $id, 'fqitem' => $item, 'fqans' => $ans, 'fqtail' => $tail,
-                    'fqrem' => $rem, 'fqstatus' => 1))->execute();
+                    'fqrem' => $rem, 'fqstatus' => 1,'userid'=>$auth))->execute();
             if ($updatec) {
                 return array("data" => $updatec, "msg" => "插入填空题成功");
             } else {
@@ -125,6 +126,7 @@ class FillqController extends Controller
     {
         $requset = \Yii::$app->request;
         $id = $requset->post('fid');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('fillq')
@@ -134,7 +136,7 @@ class FillqController extends Controller
             $flag = $requset->post('flag');
             if ($flag == 1) {
                 //暂时删除
-                $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqstatus' => 0], "fqid={$id}")->execute();
+                $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqstatus' => 0,'userid'=>$auth], "fqid={$id}")->execute();
                 if ($updatec) {
                     return array("data" => [$query, $updatec], "msg" => "该填空题删除成功");
                 } else {
@@ -171,6 +173,7 @@ class FillqController extends Controller
     {
         $request = \Yii::$app->request;
         $id = $request->post('cid');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('fillq')
@@ -184,7 +187,7 @@ class FillqController extends Controller
                 if ($item == $query['fqitem']) {
                     return array("data" => [$query, $item], "msg" => "两次题干一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqitem' => $item], "fqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqitem' => $item,'userid'=>$auth], "fqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $item, $updatec], "msg" => "该填空题题干修改成功");
                     } else {
@@ -198,7 +201,7 @@ class FillqController extends Controller
                 if ($ans == $query['fqans']) {
                     return array("data" => [$query, $ans], "msg" => "两次答案一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqans' => $ans], "fqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqans' => $ans,'userid'=>$auth], "fqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $ans, $updatec], "msg" => "该填空题答案修改成功");
                     } else {
@@ -212,7 +215,7 @@ class FillqController extends Controller
                 if ($tail == $query['fqtail']) {
                     return array("data" => [$query, $tail], "msg" => "两次详解一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqtail' => $tail], "fqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqtail' => $tail,'userid'=>$auth], "fqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $tail, $updatec], "msg" => "该填空题详解修改成功");
                     } else {
@@ -226,7 +229,7 @@ class FillqController extends Controller
                 if ($rem == $query['fqrem']) {
                     return array("data" => [$query, $rem], "msg" => "两次相关知识一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqrem' => $rem], "fqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqrem' => $rem,'userid'=>$auth], "fqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $rem, $updatec], "msg" => "该填空题相关知识修改成功");
                     } else {
@@ -236,7 +239,7 @@ class FillqController extends Controller
             }
             else if ($flag == 5) {
 //                状态
-                $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqstatus' => 1], "fqid={$id}")->execute();
+                $updatec = \Yii::$app->db->createCommand()->update('fillq', ['fqstatus' => 1,'userid'=>$auth], "fqid={$id}")->execute();
                 if ($updatec) {
                     return array("data" => [$query, $updatec], "msg" => "该填空题状态修改成功");
                 } else {
@@ -260,6 +263,7 @@ class FillqController extends Controller
             $ans= isset($data[$i]['ans'])?$data[$i]['ans']:"";
             $tail = isset($data[$i]['tail'])?$data[$i]['tail']:"";
             $rem = isset($data[$i]['rem'])?$data[$i]['rem']:"";
+            $auth = isset($data[$i]['auth'])?$data[$i]['auth']:"";
             $query = (new Query())
                 ->select('*')
                 ->from('fillq')
@@ -275,7 +279,7 @@ class FillqController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('fillq',
                     array('fqid'=>$id,'fqitem'=>$item,'fqans'=>$ans,'fqtail'=>$tail,
-                        'fqrem'=>$rem,'fqstatus'=>1))->execute();
+                        'fqrem'=>$rem,'fqstatus'=>1,'userid'=>$auth))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

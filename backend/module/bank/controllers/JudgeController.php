@@ -95,6 +95,7 @@ class JudgeController extends Controller
         $ans = $request->post('ans');
         $tail = $request->post('tail');
         $rem = $request->post('rem');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('judge')
@@ -105,7 +106,7 @@ class JudgeController extends Controller
         } else {
             $updatec = \Yii::$app->db->createCommand()->insert('judge',
                 array('jqid' => $id, 'jqitem' => $item, 'jqans' => $ans, 'jqtail' => $tail,
-                    'jqrem' => $rem, 'jqstatus' => 1))->execute();
+                    'jqrem' => $rem, 'jqstatus' => 1,'userid'=>$auth))->execute();
             if ($updatec) {
                 return array("data" => $updatec, "msg" => "插入判断题成功");
             } else {
@@ -125,6 +126,7 @@ class JudgeController extends Controller
     {
         $requset = \Yii::$app->request;
         $id = $requset->post('fid');
+        $auth = $requset->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('judge')
@@ -134,7 +136,7 @@ class JudgeController extends Controller
             $flag = $requset->post('flag');
             if ($flag == 1) {
                 //暂时删除
-                $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqstatus' => 0], "jqid={$id}")->execute();
+                $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqstatus' => 0,'userid'=>$auth], "jqid={$id}")->execute();
                 if ($updatec) {
                     return array("data" => [$query, $updatec], "msg" => "该判断题删除成功");
                 } else {
@@ -171,6 +173,7 @@ class JudgeController extends Controller
     {
         $request = \Yii::$app->request;
         $id = $request->post('cid');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('judge')
@@ -184,7 +187,7 @@ class JudgeController extends Controller
                 if ($item == $query['jqitem']) {
                     return array("data" => [$query, $item], "msg" => "两次题干一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqitem' => $item], "jqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqitem' => $item,'userid'=>$auth], "jqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $item, $updatec], "msg" => "该判断题题干修改成功");
                     } else {
@@ -198,7 +201,7 @@ class JudgeController extends Controller
                 if ($ans == $query['jqans']) {
                     return array("data" => [$query, $ans], "msg" => "两次答案一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqans' => $ans], "jqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqans' => $ans,'userid'=>$auth], "jqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $ans, $updatec], "msg" => "该判断题答案修改成功");
                     } else {
@@ -212,7 +215,7 @@ class JudgeController extends Controller
                 if ($tail == $query['jqtail']) {
                     return array("data" => [$query, $tail], "msg" => "两次详解一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqtail' => $tail], "jqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqtail' => $tail,'userid'=>$auth], "jqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $tail, $updatec], "msg" => "该判断题详解修改成功");
                     } else {
@@ -226,7 +229,7 @@ class JudgeController extends Controller
                 if ($rem == $query['jqrem']) {
                     return array("data" => [$query, $rem], "msg" => "两次相关知识一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqrem' => $rem], "jqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqrem' => $rem,'userid'=>$auth], "jqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $rem, $updatec], "msg" => "该判断题相关知识修改成功");
                     } else {
@@ -236,7 +239,7 @@ class JudgeController extends Controller
             }
             else if ($flag == 5) {
 //                状态
-                $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqstatus' => 1], "jqid={$id}")->execute();
+                $updatec = \Yii::$app->db->createCommand()->update('judge', ['jqstatus' => 1,'userid'=>$auth], "jqid={$id}")->execute();
                 if ($updatec) {
                     return array("data" => [$query, $updatec], "msg" => "该判断题状态修改成功");
                 } else {
@@ -260,6 +263,7 @@ class JudgeController extends Controller
             $ans= isset($data[$i]['ans'])?$data[$i]['ans']:"";
             $tail = isset($data[$i]['tail'])?$data[$i]['tail']:"";
             $rem = isset($data[$i]['rem'])?$data[$i]['rem']:"";
+            $auth = isset($data[$i]['auth'])?$data[$i]['auth']:"";
             $query = (new Query())
                 ->select('*')
                 ->from('judge')
@@ -275,7 +279,7 @@ class JudgeController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('judge',
                     array('jqid'=>$id,'jqitem'=>$item,'jqans'=>$ans,'jqtail'=>$tail,
-                        'jqrem'=>$rem,'jqstatus'=>1))->execute();
+                        'jqrem'=>$rem,'jqstatus'=>1,'userid'=>$auth))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

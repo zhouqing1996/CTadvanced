@@ -107,6 +107,7 @@ class ChoosemController extends Controller
         $ans = $request->post('ans');
         $tail = $request->post('tail');
         $rem=$request->post('rem');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('choosem')
@@ -121,7 +122,7 @@ class ChoosemController extends Controller
         {
             $updatec = \Yii::$app->db->createCommand()->insert('choosem',
                 array('mqid'=>$id,'mqitem'=>$item,'mqcho'=>$op,'mqans'=>$ans,'mqtail'=>$tail,
-                    'mqrem'=>$rem,'mqstatus'=>1))->execute();
+                    'mqrem'=>$rem,'mqstatus'=>1,'userid'=>$auth))->execute();
             if($updatec)
             {
                 return array("data"=>$updatec,"msg"=>"插入多选题成功");
@@ -143,6 +144,7 @@ class ChoosemController extends Controller
     {
         $requset = \Yii::$app->request;
         $id = $requset->post('cid');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('choosem')
@@ -154,7 +156,7 @@ class ChoosemController extends Controller
             if($flag==1)
             {
                 //暂时删除
-                $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqstatus'=>0],"mqid={$id}")->execute();
+                $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqstatus'=>0,'userid'=>$auth],"mqid={$id}")->execute();
                 if($updatec)
                 {
                     return array("data"=>[$query,$updatec],"msg"=>"该多选题删除成功");
@@ -203,6 +205,7 @@ class ChoosemController extends Controller
     {
         $request = \Yii::$app->request;
         $id = $request->post('cid');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('choosem')
@@ -219,7 +222,7 @@ class ChoosemController extends Controller
                     return array("data"=>[$query,$item],"msg"=>"两次题干一致，不能修改");
                 }
                 else{
-                    $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqitem'=>$item],"mqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqitem'=>$item,'userid'=>$auth],"mqid={$id}")->execute();
                     if($updatec)
                     {
                         return array("data"=>[$query,$item,$updatec],"msg"=>"该多选题题干修改成功");
@@ -245,7 +248,7 @@ class ChoosemController extends Controller
                         return array("data"=>[$query,$op],"msg"=>"两次选项一致，不能修改");
                     }
                     else{
-                        $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqcho'=>$op],"mqid={$id}")->execute();
+                        $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqcho'=>$op,'userid'=>$auth],"mqid={$id}")->execute();
                         if($updatec)
                         {
                             return array("data"=>[$query,$op,$updatec],"msg"=>"该多选题选项1修改成功");
@@ -268,7 +271,7 @@ class ChoosemController extends Controller
                         return array("data"=>[$query,$op],"msg"=>"两次选项一致，不能修改");
                     }
                     else{
-                        $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqcho'=>$op],"mqid={$id}")->execute();
+                        $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqcho'=>$op,'userid'=>$auth],"mqid={$id}")->execute();
                         if($updatec)
                         {
                             return array("data"=>[$query,$op,$updatec],"msg"=>"该多选题选项2修改成功");
@@ -291,7 +294,7 @@ class ChoosemController extends Controller
                         return array("data"=>[$query,$op],"msg"=>"两次选项一致，不能修改");
                     }
                     else{
-                        $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqcho'=>$op],"mqid={$id}")->execute();
+                        $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqcho'=>$op,'userid'=>$auth],"mqid={$id}")->execute();
                         if($updatec)
                         {
                             return array("data"=>[$query,$op,$updatec],"msg"=>"该多选题选项3修改成功");
@@ -314,7 +317,7 @@ class ChoosemController extends Controller
                         return array("data"=>[$query,$op],"msg"=>"两次选项一致，不能修改");
                     }
                     else{
-                        $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqcho'=>$op],"mqid={$id}")->execute();
+                        $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqcho'=>$op,'userid'=>$auth],"mqid={$id}")->execute();
                         if($updatec)
                         {
                             return array("data"=>[$query,$op,$updatec],"msg"=>"该多选题选项4修改成功");
@@ -337,7 +340,7 @@ class ChoosemController extends Controller
                     return array("data"=>[$query,$ans],"msg"=>"两次答案一致，不能修改");
                 }
                 else{
-                    $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqans'=>$ans],"mqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqans'=>$ans,'userid'=>$auth],"mqid={$id}")->execute();
                     if($updatec)
                     {
                         return array("data"=>[$query,$ans,$updatec],"msg"=>"该多选题答案修改成功");
@@ -356,7 +359,7 @@ class ChoosemController extends Controller
                     return array("data"=>[$query,$tail],"msg"=>"两次详解一致，不能修改");
                 }
                 else{
-                    $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqtail'=>$tail],"mqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqtail'=>$tail,'userid'=>$auth],"mqid={$id}")->execute();
                     if($updatec)
                     {
                         return array("data"=>[$query,$tail,$updatec],"msg"=>"该多选题详解修改成功");
@@ -375,7 +378,7 @@ class ChoosemController extends Controller
                     return array("data"=>[$query,$rem],"msg"=>"两次相关知识一致，不能修改");
                 }
                 else{
-                    $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqrem'=>$rem],"mqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqrem'=>$rem,'userid'=>$auth],"mqid={$id}")->execute();
                     if($updatec)
                     {
                         return array("data"=>[$query,$rem,$updatec],"msg"=>"该多选题相关知识修改成功");
@@ -389,7 +392,7 @@ class ChoosemController extends Controller
             else if($flag==6)
             {
 //                状态
-                $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqstatus'=>1],"mqid={$id}")->execute();
+                $updatec = \Yii::$app->db->createCommand()->update('choosem',['mqstatus'=>1,'userid'=>$auth],"mqid={$id}")->execute();
                 if($updatec)
                 {
                     return array("data"=>[$query,$updatec],"msg"=>"该多选题状态修改成功");
@@ -423,6 +426,7 @@ class ChoosemController extends Controller
             $ans= isset($data[$i]['ans'])?$data[$i]['ans']:"";
             $tail = isset($data[$i]['tail'])?$data[$i]['tail']:"";
             $rem = isset($data[$i]['rem'])?$data[$i]['rem']:"";
+            $auth= isset($data[$i]['auth'])?$data[$i]['auth']:"";
             $query = (new Query())
                 ->select('*')
                 ->from('choosem')
@@ -439,7 +443,7 @@ class ChoosemController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('choosem',
                     array('mqid'=>$id,'mqitem'=>$item,'mqcho'=>$op,'mqans'=>$ans,'mqtail'=>$tail,
-                        'mqrem'=>$rem,'mqstatus'=>1))->execute();
+                        'mqrem'=>$rem,'mqstatus'=>1,'userid'=>$auth))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

@@ -23,8 +23,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e9d69d1-ca5a-4f0c-90a7-011e8930b17b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/module/student/controllers/StudentController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ChoosemController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ChoosemController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ChooseqController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ChooseqController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/FillqController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/FillqController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/JudgeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/JudgeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ProgramController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ProgramController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/book/controllers/BookController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/book/controllers/BookController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/home/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/home/controllers/IndexController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/home/controllers/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/home/controllers/UserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/student/controllers/ExerciseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/student/controllers/ExerciseController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,6 +215,12 @@
       <workItem from="1603767174631" duration="2499000" />
       <workItem from="1603794470701" duration="1205000" />
       <workItem from="1604399198453" duration="5602000" />
+      <workItem from="1604449516414" duration="18224000" />
+      <workItem from="1604495269474" duration="608000" />
+      <workItem from="1604732677913" duration="10691000" />
+      <workItem from="1604814598133" duration="2980000" />
+      <workItem from="1604883602967" duration="4073000" />
+      <workItem from="1604904743310" duration="7088000" />
     </task>
     <servers />
   </component>
@@ -235,21 +252,21 @@
       <screen x="0" y="0" width="1600" height="860" />
     </state>
     <state x="525" y="297" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1600.860@0.0.1600.860" timestamp="1603179327080" />
-    <state x="601" y="241" key="FileChooserDialogImpl" timestamp="1603797641610">
+    <state x="601" y="241" key="FileChooserDialogImpl" timestamp="1604812312805">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="601" y="241" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1603797641610" />
-    <state x="910" y="352" key="NewPhpFileDialog" timestamp="1603183844590">
+    <state x="601" y="241" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1604812312805" />
+    <state x="910" y="352" key="NewPhpFileDialog" timestamp="1604817619939">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="910" y="352" key="NewPhpFileDialog/0.0.1600.860@0.0.1600.860" timestamp="1603183844590" />
+    <state x="910" y="352" key="NewPhpFileDialog/0.0.1600.860@0.0.1600.860" timestamp="1604817619939" />
     <state x="322" y="118" key="SettingsEditor" timestamp="1601265992519">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
     <state x="322" y="118" key="SettingsEditor/0.0.1600.860@0.0.1600.860" timestamp="1601265992519" />
-    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1603186052479">
+    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1604891286638">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1600.860@0.0.1600.860" timestamp="1603186052479" />
+    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1600.860@0.0.1600.860" timestamp="1604891286638" />
   </component>
 </project>

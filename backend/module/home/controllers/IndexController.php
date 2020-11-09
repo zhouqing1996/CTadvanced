@@ -85,30 +85,48 @@ class IndexController extends Controller
     	$request = \Yii::$app->request;
     	$username = $request->post('username');
     	$password = $request->post('password');
-    	if($this->UsernameQuery($username)['msg']=='No')
+    	$role = $request->post('role');
+        $query = (new Query())
+            ->select('*')
+            ->from('user')
+            ->Where(['username'=> $username])
+            ->andWhere(['role'=>$role])
+            ->andWhere(['status'=> 1])
+            ->one();
+    	if($query)
     	{
-    		$passwordE = $this->PasswordEncry($password);
-    		$role = 3;
-    		$status = 1;
-    		$queryid  = (new Query())
-    				->select('*')
-    				->from('user')
-                    ->max('id');
-    		$id = $queryid +1;
-    		$insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,'status'=>$status))->execute();
-    		if($insertU)
-    		{
-    			return array("data"=>[$username,$passwordE],"msg"=>"注册成功");
-    		}
-    		else
-    		{
-    			return array("data"=>[$username,$passwordE],"msg"=>"注册失败");
-    		}
-
+            return array("data"=>[],"msg"=>"该用户名已存在");
     	}
     	else
     	{
-    		return array("data"=>[],"msg"=>"该用户名已存在");
+            $passwordE = $this->PasswordEncry($password);
+            $status = 1;
+            $queryid  = (new Query())
+                ->select('*')
+                ->from('user')
+                ->max('id');
+            $id = $queryid +1;
+            $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,'status'=>$status))->execute();
+//            if($role==1)
+//            {
+//                $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,'status'=>$status))->execute();
+//            }
+//            else if($role==2)
+//            {
+//                $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,'status'=>$status))->execute();
+//            }
+//            else if($role==3)
+//            {
+//                $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,'status'=>$status))->execute();
+//            }
+            if($insertU)
+            {
+                return array("data"=>[$username,$passwordE],"msg"=>"注册成功");
+            }
+            else
+            {
+                return array("data"=>[$username,$passwordE],"msg"=>"注册失败");
+            }
     	}
     }
     /*
@@ -119,10 +137,12 @@ class IndexController extends Controller
     	$request = \Yii::$app->request;
     	$username = $request->post('username');
     	$password = $request->post('password');
+    	$role = $request->post('role');
         $query = (new Query())
             ->select('*')
             ->from('user')
             ->Where(['username'=> $username])
+            ->andWhere(['role'=>$role])
             ->andWhere(['status'=> 1])
             ->one();
     	if($query!=null)
@@ -159,10 +179,12 @@ class IndexController extends Controller
     	$request = \Yii::$app->request;
     	$username = $request->post('username');
     	$password = $request->post('password');
+    	$role = $request->post('role');
         $query = (new Query())
             ->select('*')
             ->from('user')
             ->Where(['username'=> $username])
+            ->andWhere(['role'=>$role])
             ->andWhere(['status'=> 1])
             ->one();
     	if($query != null)

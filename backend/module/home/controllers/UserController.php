@@ -253,6 +253,7 @@ class UserController extends Controller
             ->select('*')
             ->from('user')
             ->Where(['username'=> $username])
+            ->andWhere(['role'=>$role])
             ->one();
         if($query){
             return array("data"=>[$query],"msg"=>"该用户名已存在");
@@ -400,10 +401,6 @@ class UserController extends Controller
                 //修改密码
                 $password =$request->post('password');
                 $passwordD = \backend\module\home\controllers\IndexController::PasswordEncry($password);
-//                if($password == $passwordD)
-//                {
-//                    return array("data"=>[$passwordD,$password],"msg"=>"和原始密码一致");
-//                }
                 $updateU = \Yii::$app->db->createCommand()->update('user', ['password'=>$passwordD], "id={$userid}")->execute();
                 if($updateU)
                 {
@@ -451,6 +448,7 @@ class UserController extends Controller
                 ->select("*")
                 ->from('user')
                 ->where(['username'=>$name])
+                ->andWhere(['role'=>$role])
                 ->one();
             $query2 = (new Query())
                 ->select("*")

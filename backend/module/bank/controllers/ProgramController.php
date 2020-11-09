@@ -95,6 +95,7 @@ class ProgramController extends Controller
         $ans = $request->post('ans');
         $tail = $request->post('tail');
         $rem = $request->post('rem');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('program')
@@ -105,7 +106,7 @@ class ProgramController extends Controller
         } else {
             $updatec = \Yii::$app->db->createCommand()->insert('program',
                 array('pqid' => $id, 'pqitem' => $item, 'pqans' => $ans, 'pqtail' => $tail,
-                    'pqrem' => $rem, 'pqstatus' => 1))->execute();
+                    'pqrem' => $rem, 'pqstatus' => 1,'userid'=>$auth))->execute();
             if ($updatec) {
                 return array("data" => $updatec, "msg" => "插入程序题成功");
             } else {
@@ -125,6 +126,7 @@ class ProgramController extends Controller
     {
         $requset = \Yii::$app->request;
         $id = $requset->post('fid');
+        $auth = $requset->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('program')
@@ -134,7 +136,7 @@ class ProgramController extends Controller
             $flag = $requset->post('flag');
             if ($flag == 1) {
                 //暂时删除
-                $updatec = \Yii::$app->db->createCommand()->update('program', ['pqstatus' => 0], "pqid={$id}")->execute();
+                $updatec = \Yii::$app->db->createCommand()->update('program', ['pqstatus' => 0,'userid'=>$auth], "pqid={$id}")->execute();
                 if ($updatec) {
                     return array("data" => [$query, $updatec], "msg" => "该程序题删除成功");
                 } else {
@@ -171,6 +173,7 @@ class ProgramController extends Controller
     {
         $request = \Yii::$app->request;
         $id = $request->post('cid');
+        $auth = $request->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('program')
@@ -184,7 +187,7 @@ class ProgramController extends Controller
                 if ($item == $query['pqitem']) {
                     return array("data" => [$query, $item], "msg" => "两次题干一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('program', ['pqitem' => $item], "pqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('program', ['pqitem' => $item,'userid'=>$auth], "pqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $item, $updatec], "msg" => "该程序题题干修改成功");
                     } else {
@@ -198,7 +201,7 @@ class ProgramController extends Controller
                 if ($ans == $query['pqans']) {
                     return array("data" => [$query, $ans], "msg" => "两次答案一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('program', ['pqans' => $ans], "pqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('program', ['pqans' => $ans,'userid'=>$auth], "pqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $ans, $updatec], "msg" => "该程序题答案修改成功");
                     } else {
@@ -212,7 +215,7 @@ class ProgramController extends Controller
                 if ($tail == $query['pqtail']) {
                     return array("data" => [$query, $tail], "msg" => "两次详解一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('program', ['pqtail' => $tail], "pqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('program', ['pqtail' => $tail,'userid'=>$auth], "pqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $tail, $updatec], "msg" => "该程序题详解修改成功");
                     } else {
@@ -226,7 +229,7 @@ class ProgramController extends Controller
                 if ($rem == $query['pqrem']) {
                     return array("data" => [$query, $rem], "msg" => "两次相关知识一致，不能修改");
                 } else {
-                    $updatec = \Yii::$app->db->createCommand()->update('program', ['pqrem' => $rem], "pqid={$id}")->execute();
+                    $updatec = \Yii::$app->db->createCommand()->update('program', ['pqrem' => $rem,'userid'=>$auth], "pqid={$id}")->execute();
                     if ($updatec) {
                         return array("data" => [$query, $rem, $updatec], "msg" => "该程序题相关知识修改成功");
                     } else {
@@ -236,7 +239,7 @@ class ProgramController extends Controller
             }
             else if ($flag == 5) {
 //                状态
-                $updatec = \Yii::$app->db->createCommand()->update('program', ['pqstatus' => 1], "pqid={$id}")->execute();
+                $updatec = \Yii::$app->db->createCommand()->update('program', ['pqstatus' => 1,'userid'=>$auth], "pqid={$id}")->execute();
                 if ($updatec) {
                     return array("data" => [$query, $updatec], "msg" => "该程序题状态修改成功");
                 } else {
@@ -260,6 +263,7 @@ class ProgramController extends Controller
             $ans= isset($data[$i]['ans'])?$data[$i]['ans']:"";
             $tail = isset($data[$i]['tail'])?$data[$i]['tail']:"";
             $rem = isset($data[$i]['rem'])?$data[$i]['rem']:"";
+            $auth = isset($data[$i]['auth'])?$data[$i]['auth']:"";
             $query = (new Query())
                 ->select('*')
                 ->from('program')
@@ -275,7 +279,7 @@ class ProgramController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('program',
                     array('pqid'=>$id,'pqitem'=>$item,'pqans'=>$ans,'pqtail'=>$tail,
-                        'pqrem'=>$rem,'pqstatus'=>1))->execute();
+                        'pqrem'=>$rem,'pqstatus'=>1,'userid'=>$auth))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

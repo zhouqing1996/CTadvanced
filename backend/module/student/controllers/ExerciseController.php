@@ -108,25 +108,30 @@ class ExerciseController extends Controller
                 ->all();
             if($query)
             {
-                $query = (new Query())
-                    ->select('*')
-                    ->from('pratice')
-                    ->Where(['userid'=>$uid])
-                    ->andWhere(['qid'=>$qid])
-                    ->andWhere(['qtypeid'=>1])
-                    ->max('id');
-                $id = $query+1;
+                $c = count($query);
+                $id = $c+1;
             }
             else
             {
                 $id = 1;
             }
-
+            $cc = (new Query())
+                ->select('*')
+                ->from('chooseq')
+                ->where(['cqid'=>$qid])
+                ->one();
+            if($cc['cqans']==$ans[0]['ans'])
+            {
+                $cgrade =1;
+            }
+            else{
+                $cgrade =0;
+            }
             $insert= \Yii::$app->db->createCommand()->insert('pratice',array('id'=>$id,'userid'=>$uid,
-                'qid'=>$qid,'qtypeid'=>1,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime))->execute();
+                'qid'=>$qid,'qtypeid'=>1,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime,'grade'=>$cgrade))->execute();
             if($insert)
             {
-                return array("data"=>$insert,"msg"=>"练习选择题成功");
+                return array("data"=>$cgrade,"msg"=>"练习选择题成功");
             }
             else{
                 return array("data"=>$insert,"msg"=>"练习选择题失败");
@@ -143,25 +148,30 @@ class ExerciseController extends Controller
                 ->all();
             if($query)
             {
-                $query = (new Query())
-                    ->select('*')
-                    ->from('pratice')
-                    ->Where(['userid'=>$uid])
-                    ->andWhere(['qid'=>$qid])
-                    ->andWhere(['qtypeid'=>2])
-                    ->max('id');
-                $id = $query+1;
+                $fm = count($query);
+                $id = $fm+1;
             }
             else
             {
                 $id = 1;
             }
-
+            $ff = (new Query())
+                ->select('*')
+                ->from('fillq')
+                ->where(['fqid'=>$qid])
+                ->one();
+            if($ff['fqans']==$ans[0]['ans'])
+            {
+                $fgrade =1;
+            }
+            else{
+                $fgrade =0;
+            }
             $insert= \Yii::$app->db->createCommand()->insert('pratice',array('id'=>$id,'userid'=>$uid,
-                'qid'=>$qid,'qtypeid'=>2,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime))->execute();
+                'qid'=>$qid,'qtypeid'=>2,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime,'grade'=>$fgrade))->execute();
             if($insert)
             {
-                return array("data"=>$insert,"msg"=>"练习填空题成功");
+                return array("data"=>$fgrade,"msg"=>"练习填空题成功");
             }
             else{
                 return array("data"=>$insert,"msg"=>"练习填空题失败");
@@ -178,25 +188,30 @@ class ExerciseController extends Controller
                 ->all();
             if($query)
             {
-                $query = (new Query())
-                    ->select('*')
-                    ->from('pratice')
-                    ->Where(['userid'=>$uid])
-                    ->andWhere(['qid'=>$qid])
-                    ->andWhere(['qtypeid'=>3])
-                    ->max('id');
-                $id = $query+1;
+                $pm = count($query);
+                $id = $pm+1;
             }
             else
             {
                 $id = 1;
             }
-
+            $pp = (new Query())
+                ->select('*')
+                ->from('program')
+                ->where(['pqid'=>$qid])
+                ->one();
+            if($pp['pqans']==$ans[0]['ans'])
+            {
+                $pgrade =1;
+             }
+            else{
+                $pgrade =0;
+            }
             $insert= \Yii::$app->db->createCommand()->insert('pratice',array('id'=>$id,'userid'=>$uid,
-                'qid'=>$qid,'qtypeid'=>3,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime))->execute();
+                'qid'=>$qid,'qtypeid'=>3,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime,'grade'=>$pgrade))->execute();
             if($insert)
             {
-                return array("data"=>$insert,"msg"=>"练习程序题成功");
+                return array("data"=>$pgrade,"msg"=>"练习程序题成功");
             }
             else{
                 return array("data"=>$insert,"msg"=>"练习程序题失败");
@@ -213,25 +228,31 @@ class ExerciseController extends Controller
                 ->all();
             if($query)
             {
-                $query = (new Query())
-                    ->select('*')
-                    ->from('pratice')
-                    ->Where(['userid'=>$uid])
-                    ->andWhere(['qid'=>$qid])
-                    ->andWhere(['qtypeid'=>5])
-                    ->max('id');
-                $id = $query+1;
+                $Jm = count($query);
+                $id = $Jm+1;
             }
             else
             {
                 $id = 1;
             }
-
+            //            判断答案是否正确
+            $jj = (new Query())
+                ->select('*')
+                ->from('judge')
+                ->where(['jqid'=>$qid])
+                ->one();
+            if($jj['jqans']==$ans[0]['ans'])
+            {
+                $jgrade = 1;
+            }
+            else{
+                $jgrade=0;
+            }
             $insert= \Yii::$app->db->createCommand()->insert('pratice',array('id'=>$id,'userid'=>$uid,
-                'qid'=>$qid,'qtypeid'=>5,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime))->execute();
+                'qid'=>$qid,'qtypeid'=>5,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime,'grade'=>$jgrade))->execute();
             if($insert)
             {
-                return array("data"=>$insert,"msg"=>"练习判断题成功");
+                return array("data"=>$jgrade,"msg"=>"练习判断题成功");
             }
             else{
                 return array("data"=>$insert,"msg"=>"练习判断题失败");
@@ -248,25 +269,36 @@ class ExerciseController extends Controller
                 ->all();
             if($query)
             {
-                $query = (new Query())
-                    ->select('*')
-                    ->from('pratice')
-                    ->Where(['userid'=>$uid])
-                    ->andWhere(['qid'=>$qid])
-                    ->andWhere(['qtypeid'=>4])
-                    ->max('id');
-                $id = $query+1;
+                $n = count($query);
+                $id = $n+1;
             }
             else
             {
                 $id = 1;
             }
-
+//            判断答案是否正确
+            $querym = (new Query())
+                ->select('*')
+                ->from('choosem')
+                ->where(['mqid'=>$qid])
+                ->one();
+            $s = $querym['mqans'];
+            $exp1 = explode('---',$s);
+            $exp2 = explode('---',$ans[0]['ans']);
+            sort($exp2);
+            sort($exp1);
+            if($exp1===$exp2)
+            {
+                $mgrade = 1;
+            }
+            else{
+                $mgrade = 0;
+            }
             $insert= \Yii::$app->db->createCommand()->insert('pratice',array('id'=>$id,'userid'=>$uid,
-                'qid'=>$qid,'qtypeid'=>4,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime))->execute();
+                'qid'=>$qid,'qtypeid'=>4,'ans'=>$ans[0]['ans'],'finishtime'=>$finishtime,'status'=>1,'ctime'=>$ctime,'grade'=>$mgrade))->execute();
             if($insert)
             {
-                return array("data"=>$insert,"msg"=>"练习多选题成功");
+                return array("data"=>$mgrade,"msg"=>"练习多选题成功");
             }
             else{
                 return array("data"=>$insert,"msg"=>"练习多选题失败");
