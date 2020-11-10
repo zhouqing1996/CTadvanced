@@ -13,15 +13,7 @@ class StudentController extends Controller
     {
         return array('data'=>'sss','msg'=>'学生数据分析');
     }
-//    学生列表
-    public function actionQuerystudent()
-    {
-        $query = (new Query())
-            ->select('*')
-            ->from('student')
-            ->where(['status'=>1])
-            ->all();
-    }
+
 //    学生选择老师
 //参数：sid tid
     public function actionChoosest()
@@ -29,6 +21,56 @@ class StudentController extends Controller
         $request =  \Yii::$app->request;
         $sid = $request->post('sid');
         $tid = $request->post('tid');
+        $query = (new Query())
+            ->select('*')
+            ->from('student')
+            ->where(['sid'=>$sid])
+            ->andWhere(['tid'=>$tid])
+            ->one();
+        if($query)
+        {
+            return array('data'=>$query,'msg'=>'已选择该导师！');
+        }
+//        $num =$query+1;
+        $insertU = \Yii::$app->db->createCommand()->insert('student',array('sid'=>$sid,'tid'=>$tid,'cid'=>'','status'=>1))->execute();
+        if($insertU)
+        {
+            return array('data'=>$insertU,'msg'=>'选择成功！');
+        }
+        else{
+            return array('data'=>$insertU,'msg'=>'选择失败！');
+        }
+    }
+//    学生的导师列表
+//参数:学生id
+    public function actionStlist()
+    {
+        $request = \Yii::$app->request;
+        $sid = $request->post('sid');
+        $query = (new Query())
+            ->select('*')
+            ->from('student')
+            ->where(['sid'=>$sid])
+            ->all();
+        if($query)
+        {
+            $list = [];
+            for($i=0;$i<count($query);$i++){
+                $queryt = (new Query())
+                    ->select('*')
+                    ->from('user')
+                    ->where(['id'=>$query[$i]['tid']])
+                    ->one();
+                $list[$i]['tid']=$queryt['id'];
+                $list[$i]['tno']=$queryt['no'];
+                $list[$i]['tname']=$queryt['username'];
+            }
+            return array('data'=>$list,'msg'=>'查找学生导师信息');
+        }
+        else
+        {
+            return array('data'=>$query,'msg'=>'学生导师信息为空！');
+        }
 
     }
 

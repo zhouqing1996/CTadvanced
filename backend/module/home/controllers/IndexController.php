@@ -86,10 +86,12 @@ class IndexController extends Controller
     	$username = $request->post('username');
     	$password = $request->post('password');
     	$role = $request->post('role');
+        $no = $request->post('no');
         $query = (new Query())
             ->select('*')
             ->from('user')
-            ->Where(['username'=> $username])
+//            ->Where(['username'=> $username])
+            ->Where(['no'=> $no])
             ->andWhere(['role'=>$role])
             ->andWhere(['status'=> 1])
             ->one();
@@ -106,7 +108,8 @@ class IndexController extends Controller
                 ->from('user')
                 ->max('id');
             $id = $queryid +1;
-            $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,'status'=>$status))->execute();
+            $insertU = \Yii::$app->db->createCommand()->insert('user',
+                array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,'status'=>$status,'no'=>$no))->execute();
 //            if($role==1)
 //            {
 //                $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,'status'=>$status))->execute();
@@ -135,13 +138,15 @@ class IndexController extends Controller
     public function actionForget()
     {
     	$request = \Yii::$app->request;
-    	$username = $request->post('username');
+//    	$username = $request->post('username');
     	$password = $request->post('password');
     	$role = $request->post('role');
+        $no = $request->post('no');
         $query = (new Query())
             ->select('*')
             ->from('user')
-            ->Where(['username'=> $username])
+            ->Where(['no'=> $no])
+            ->orWhere(['username'=>$no])
             ->andWhere(['role'=>$role])
             ->andWhere(['status'=> 1])
             ->one();
@@ -152,11 +157,11 @@ class IndexController extends Controller
             $updateU = \Yii::$app->db->createCommand()->update('user', ['password' => $passwordE], 'id=:id',[':id'=>$id])->execute();
             if($updateU)
             {
-                return array("data"=>[$username,$passwordE],"msg"=>"修改密码成功");
+                return array("data"=>[$no,$passwordE],"msg"=>"修改密码成功");
             }
             else
             {
-                return array("data"=>[$username,$passwordE],"msg"=>"修改密码不成功");
+                return array("data"=>[$no,$passwordE],"msg"=>"修改密码不成功");
             }
     	}
     	else
@@ -184,6 +189,7 @@ class IndexController extends Controller
             ->select('*')
             ->from('user')
             ->Where(['username'=> $username])
+            ->orWhere(['no'=>$username])
             ->andWhere(['role'=>$role])
             ->andWhere(['status'=> 1])
             ->one();

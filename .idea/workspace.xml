@@ -23,19 +23,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e9d69d1-ca5a-4f0c-90a7-011e8930b17b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/module/student/controllers/StudentController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ChoosemController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ChoosemController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ChooseqController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ChooseqController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/FillqController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/FillqController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/JudgeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/JudgeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ProgramController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ProgramController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/book/controllers/BookController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/book/controllers/BookController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/module/home/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/home/controllers/IndexController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/module/home/controllers/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/home/controllers/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/student/controllers/ExerciseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/student/controllers/ExerciseController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/student/controllers/StudentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/student/controllers/StudentController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherstudentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -220,7 +213,8 @@
       <workItem from="1604732677913" duration="10691000" />
       <workItem from="1604814598133" duration="2980000" />
       <workItem from="1604883602967" duration="4073000" />
-      <workItem from="1604904743310" duration="7088000" />
+      <workItem from="1604904743310" duration="7688000" />
+      <workItem from="1604975835163" duration="9221000" />
     </task>
     <servers />
   </component>
@@ -244,10 +238,10 @@
       <screen x="0" y="0" width="1600" height="860" />
     </state>
     <state x="146" y="109" key="#com.intellij.ide.util.MemberChooser/0.0.1600.860@0.0.1600.860" timestamp="1601341579174" />
-    <state x="210" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1602033540943">
+    <state x="210" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1605000784240">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="210" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1600.860@0.0.1600.860" timestamp="1602033540943" />
+    <state x="210" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1600.860@0.0.1600.860" timestamp="1605000784240" />
     <state x="525" y="297" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1603179327080">
       <screen x="0" y="0" width="1600" height="860" />
     </state>

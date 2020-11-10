@@ -243,6 +243,7 @@ class UserController extends Controller
         $passwordE = \backend\module\home\controllers\IndexController::PasswordEncry($password);
         $role = $request->post('addrole');
         $status = $request->post('addstatus');
+        $no = $request->post('addno');
         $userid = (new Query())
             ->select('*')
             ->from('user')
@@ -253,13 +254,14 @@ class UserController extends Controller
             ->select('*')
             ->from('user')
             ->Where(['username'=> $username])
+            ->andWhere(['no'=>$no])
             ->andWhere(['role'=>$role])
             ->one();
         if($query){
             return array("data"=>[$query],"msg"=>"该用户名已存在");
         }
         $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,
-            'status'=>$status))->execute();
+            'status'=>$status,'no'=>$no))->execute();
         if($insertU)
         {
             return array("data"=>[$username,$id],"msg"=>"用户添加成功");
@@ -440,6 +442,7 @@ class UserController extends Controller
         $data = json_decode($data,true);
         for($i=0;$i<count($data);$i++)
         {
+            $no = isset($data[$i]['no'])?$data[$i]['no']:"";
             $name = isset($data[$i]['name'])?$data[$i]['name']:"";
             $password = isset($data[$i]['password'])?$data[$i]['password']:"";
             $passwordE = \backend\module\home\controllers\IndexController::PasswordEncry($password);
@@ -458,9 +461,48 @@ class UserController extends Controller
             if($query == null)
             {
                 $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$name,
-                    'password'=>$passwordE,'role'=>$role,'status'=>1))->execute();
+                    'password'=>$passwordE,'role'=>$role,'status'=>1,'no'=>$no))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");
+    }
+
+//    获取系统中的教师列表
+//    获取系统中的学生列表
+// 参数：flag标志：1管理员，2教师，3，学生
+    public function actionPerson()
+    {
+        $request = \Yii::$app->request;
+        $flag = $request->post('flag');
+        if($flag==1)
+        {
+            $query = (new Query())
+                ->select('*')
+                ->from('user')
+                ->where(['role'=>1])
+                ->andWhere(['status'=>1])
+                ->all();
+            return array('data'=>$query,'msg'=>"管理员列表");
+        }
+        else if($flag==2)
+        {
+            $query = (new Query())
+                ->select('*')
+                ->from('user')
+                ->where(['role'=>2])
+                ->andWhere(['status'=>1])
+                ->all();
+            return array('data'=>$query,'msg'=>"教师列表");
+        }
+        else if ($flag==3)
+        {
+            $query = (new Query())
+                ->select('*')
+                ->from('user')
+                ->where(['role'=>3])
+                ->andWhere(['status'=>1])
+                ->all();
+            return array('data'=>$query,'msg'=>"学生列表");
+        }
     }
 }

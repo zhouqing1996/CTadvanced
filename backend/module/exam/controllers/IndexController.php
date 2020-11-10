@@ -34,6 +34,7 @@ class IndexController extends Controller
      * 2：已删除试卷
      * 3：所有试卷
      * 4:模糊查找
+     * 5：学生查看试卷：只能查看他选择的导师的试卷   参数：sid
      */
     public function actionQueryexam()
     {
@@ -76,6 +77,38 @@ class IndexController extends Controller
                     ['like', 'exid', $name],])
                 ->all();
             return array("data"=>$query,"msg"=>$name."全部试卷");
+        }
+        else if($flag==5)
+        {
+            $sid = $request->post('sid');
+//            查找其导师
+            $queryt = (new Query())
+                ->select('*')
+                ->from('student')
+                ->where(['sid'=>$sid])
+                ->all();
+            $list = [];
+            $k =0;
+            for($i=0;$i<count($queryt);$i++)
+            {
+                $query = (new Query())
+                    ->select('*')
+                    ->from('exam')
+                    ->where(['exstatus'=>1])
+                    ->andWhere(['auth'=>$queryt[$i]['tid']])
+                    ->all();
+                for($j=0;$j<count($query);$j++)
+                {
+                    $list[$k]['exid']=$query[$j]['exid'];
+                    $list[$k]['exname']=$query[$j]['exname'];
+                    $list[$k]['createtime']=$query[$j]['createtime'];
+                    $list[$k]['auth']=$query[$j]['auth'];
+                    $list[$k]['gdtime']=$query[$j]['gdtime'];
+                    $list[$k]['exstatus']=$query[$j]['exstatus'];
+                    $k++;
+                }
+            }
+            return array("data"=>$list,"msg"=>"有效试卷");
         }
         else{
             return array("data"=>$flag,"msg"=>"输入错误");
