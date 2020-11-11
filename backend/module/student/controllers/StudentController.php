@@ -32,7 +32,7 @@ class StudentController extends Controller
             return array('data'=>$query,'msg'=>'已选择该导师！');
         }
 //        $num =$query+1;
-        $insertU = \Yii::$app->db->createCommand()->insert('student',array('sid'=>$sid,'tid'=>$tid,'cid'=>'','status'=>1))->execute();
+        $insertU = \Yii::$app->db->createCommand()->insert('student',array('sid'=>$sid,'tid'=>$tid,'status'=>1))->execute();
         if($insertU)
         {
             return array('data'=>$insertU,'msg'=>'选择成功！');

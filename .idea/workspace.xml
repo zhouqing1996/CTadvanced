@@ -24,11 +24,9 @@
   <component name="ChangeListManager">
     <list default="true" id="9e9d69d1-ca5a-4f0c-90a7-011e8930b17b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/home/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/home/controllers/IndexController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/home/controllers/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/home/controllers/UserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/module/student/controllers/StudentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/student/controllers/StudentController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherstudentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +212,9 @@
       <workItem from="1604814598133" duration="2980000" />
       <workItem from="1604883602967" duration="4073000" />
       <workItem from="1604904743310" duration="7688000" />
-      <workItem from="1604975835163" duration="9221000" />
+      <workItem from="1604975835163" duration="9423000" />
+      <workItem from="1605077970280" duration="278000" />
+      <workItem from="1605092228696" duration="6236000" />
     </task>
     <servers />
   </component>
@@ -246,10 +246,10 @@
       <screen x="0" y="0" width="1600" height="860" />
     </state>
     <state x="525" y="297" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1600.860@0.0.1600.860" timestamp="1603179327080" />
-    <state x="601" y="241" key="FileChooserDialogImpl" timestamp="1604812312805">
+    <state x="601" y="241" key="FileChooserDialogImpl" timestamp="1605078248381">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="601" y="241" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1604812312805" />
+    <state x="601" y="241" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1605078248381" />
     <state x="910" y="352" key="NewPhpFileDialog" timestamp="1604817619939">
       <screen x="0" y="0" width="1600" height="860" />
     </state>

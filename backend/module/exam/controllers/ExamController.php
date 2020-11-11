@@ -354,6 +354,7 @@ class ExamController extends Controller
                     sort($exp1);
                     if($exp1===$exp2)
                     {
+                        $x = $x+1;
                         $mgrade = 1;
                     }
                     else{
