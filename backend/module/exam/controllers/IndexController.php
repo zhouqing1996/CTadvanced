@@ -140,6 +140,16 @@ class IndexController extends Controller
         $arr = $this->Rand($min,$max,$num);
         return array("data"=>$arr,"msg"=>"产生的随机数");
     }
+//    试卷中第几题
+//参数：eid,
+    public function NumItem($eid)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('examtail')
+            ->where(['exid'=>$eid])
+            ->max('id');
+    }
     /*
      * 组卷：
      * 两种形式：自动组卷（随机）、人为选择组卷
@@ -158,7 +168,7 @@ class IndexController extends Controller
      */
     public function actionAddexam()
     {
-
+        set_time_limit(0);
         $request = \Yii::$app->request;
         $flag = $request->post("flag");
         $id = (new Query())
@@ -198,8 +208,9 @@ class IndexController extends Controller
                 if($err['cqstatus']==1)
                 {
 //                    失效试题
+                    $xc = $this->NumItem($id)+1;
                     $insertc = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $arrc[$x], 'qtypeid' => 1, 'exstatus' => 1))->execute();
+                        'qid' => $arrc[$x], 'qtypeid' => 1, 'exstatus' => 1,'id'=>$xc))->execute();
                     $x =$x+1;
                 }
                 else{
@@ -219,8 +230,9 @@ class IndexController extends Controller
                     ->one();
                 if($err['fqstatus']==1)
                 {
+                    $xf = $this->NumItem($id)+1;
                     $insertf= \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $arrf[$x], 'qtypeid' => 2, 'exstatus' => 1))->execute();
+                        'qid' => $arrf[$x], 'qtypeid' => 2, 'exstatus' => 1,'id'=>$xf))->execute();
                     $x =$x+1;
                 }
                 else{
@@ -240,8 +252,9 @@ class IndexController extends Controller
                     ->one();
                 if($err['pqstatus']==1)
                 {
+                    $xp = $this->NumItem($id)+1;
                     $insertp = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $arrp[$x], 'qtypeid' => 3, 'exstatus' => 1))->execute();
+                        'qid' => $arrp[$x], 'qtypeid' => 3, 'exstatus' => 1,'id'=>$xp))->execute();
                     $x =$x+1;
                 }
                 else{
@@ -261,8 +274,9 @@ class IndexController extends Controller
                     ->one();
                 if($err['jqstatus']==1)
                 {
+                    $xj = $this->NumItem($id)+1;
                     $insertj = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $arrj[$x], 'qtypeid' => 5, 'exstatus' => 1))->execute();
+                        'qid' => $arrj[$x], 'qtypeid' => 5, 'exstatus' => 1,'id'=>$xj))->execute();
                     $x =$x+1;
                 }
                 else{
@@ -282,8 +296,9 @@ class IndexController extends Controller
                     ->one();
                 if($err['mqstatus']==1)
                 {
+                    $xcm = $this->NumItem($id)+1;
                     $insertcm = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $arrcm[$x], 'qtypeid' => 4, 'exstatus' => 1))->execute();
+                        'qid' => $arrcm[$x], 'qtypeid' => 4, 'exstatus' => 1,'id'=>$xcm))->execute();
                     $x =$x+1;
                 }
                 else{
@@ -382,8 +397,9 @@ class IndexController extends Controller
                         ->from('chooseq')
                         ->where(['cqid'=>$chooseList[$i]])
                         ->one();
+                    $xc = $this->NumItem($id)+1;
                     $insertc = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $c['cqid'], 'qtypeid' => 1, 'exstatus' => 1))->execute();
+                        'qid' => $c['cqid'], 'qtypeid' => 1, 'exstatus' => 1,'id'=>$xc))->execute();
                 }
                 $fillList= $request->post('fillList');
                 for($i=0;$i<count($fillList);$i++)
@@ -393,8 +409,9 @@ class IndexController extends Controller
                         ->from('fillq')
                         ->where(['fqid'=>(int)$fillList[$i]])
                         ->one();
+                    $xf = $this->NumItem($id)+1;
                     $insertf = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $c['fqid'], 'qtypeid' => 2, 'exstatus' => 1))->execute();
+                        'qid' => $c['fqid'], 'qtypeid' => 2, 'exstatus' => 1,'id'=>$xf))->execute();
                 }
                 $judgeList= $request->post('judgeList');
                 for($i=0;$i<count($judgeList);$i++)
@@ -404,8 +421,9 @@ class IndexController extends Controller
                         ->from('judge')
                         ->where(['jqid'=>(int)$judgeList[$i]])
                         ->one();
+                    $xj = $this->NumItem($id)+1;
                     $insertj = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $c['jqid'], 'qtypeid' => 5, 'exstatus' => 1))->execute();
+                        'qid' => $c['jqid'], 'qtypeid' => 5, 'exstatus' => 1,'id'=>$xj))->execute();
                 }
                 $choosemList= $request->post('choosemList');
                 for($i=0;$i<count($choosemList);$i++)
@@ -415,8 +433,9 @@ class IndexController extends Controller
                         ->from('choosem')
                         ->where(['mqid'=>(int)$choosemList[$i]])
                         ->one();
+                    $xcm = $this->NumItem($id)+1;
                     $insertm = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $c['mqid'], 'qtypeid' => 4, 'exstatus' => 1))->execute();
+                        'qid' => $c['mqid'], 'qtypeid' => 4, 'exstatus' => 1,'id'=>$xcm))->execute();
                 }
                 $programList= $request->post('programList');
                 for($i=0;$i<count($programList);$i++)
@@ -426,8 +445,9 @@ class IndexController extends Controller
                         ->from('program')
                         ->where(['pqid'=>(int)$programList[$i]])
                         ->one();
+                    $xp = $this->NumItem($id)+1;
                     $insertp = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $c['pqid'], 'qtypeid' => 3, 'exstatus' => 1))->execute();
+                        'qid' => $c['pqid'], 'qtypeid' => 3, 'exstatus' => 1,'id'=>$xp))->execute();
                 }
                 $exname = $request->post('exname');
                 $auth = $request->post('auth');
@@ -476,10 +496,11 @@ class IndexController extends Controller
                     ->andWhere(['cqcho'=>$op])
                     ->andWhere(['cqrem'=>$Clist[$i]['cqrem']])
                     ->one();
+                $xc = $this->NumItem($id)+1;
                 if($quesy)
                 {
                     $insertc = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $quesy['cqid'], 'qtypeid' => 1, 'exstatus' => 1))->execute();
+                        'qid' => $quesy['cqid'], 'qtypeid' => 1, 'exstatus' => 1,'id'=>$xc))->execute();
                 }
                 else{
                     $idc = (new Query())
@@ -491,7 +512,7 @@ class IndexController extends Controller
                         array('cqid'=>$idc,'cqitem'=>$Clist[$i]['cqitem'],'cqcho'=>$op,'cqans'=>$Clist[$i]['cqans'],'cqtail'=>$Clist[$i]['cqtail'],
                             'cqrem'=>$Clist[$i]['cqrem'],'cqstatus'=>1,'userid'=>$auth))->execute();
                     $insertc = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $idc, 'qtypeid' => 1, 'exstatus' => 1))->execute();
+                        'qid' => $idc, 'qtypeid' => 1, 'exstatus' => 1,'id'=>$xc))->execute();
                 }
             }
             for($i=0;$i<count($Flist);$i++)
@@ -504,10 +525,11 @@ class IndexController extends Controller
                     ->andWhere(['fqtail' => $Flist[$i]['ftail']])
                     ->andWhere(['fqrem' => $Flist[$i]['frem']])
                     ->one();
+                $xf = $this->NumItem($id)+1;
                 if($q)
                 {
                     $insertf = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $q['fqid'], 'qtypeid' => 2, 'exstatus' => 1))->execute();
+                        'qid' => $q['fqid'], 'qtypeid' => 2, 'exstatus' => 1,'id'=>$xf))->execute();
                 }
                 else{
                     $idf = (new Query())
@@ -519,7 +541,7 @@ class IndexController extends Controller
                         array('fqid' => $idf, 'fqitem' => $Flist[$i]['fitem'], 'fqans' => $Flist[$i]['fans'], 'fqtail' => $Flist[$i]['ftail'],
                             'fqrem' => $Flist[$i]['frem'], 'fqstatus' => 1,'userid'=>$auth))->execute();
                     $insertf = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $idf, 'qtypeid' => 2, 'exstatus' => 1))->execute();
+                        'qid' => $idf, 'qtypeid' => 2, 'exstatus' => 1,'id'=>$xf))->execute();
                 }
             }
             for($i=0;$i<count($Jlist);$i++)
@@ -533,10 +555,11 @@ class IndexController extends Controller
                     ->andWhere(['jqtail' => $Jlist[$i]['jtail']])
                     ->andWhere(['jqrem' => $Jlist[$i]['jrem']])
                     ->one();
+                $xj = $this->NumItem($id)+1;
                 if($q)
                 {
                     $insertj = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $q['jqid'], 'qtypeid' => 5, 'exstatus' => 1))->execute();
+                        'qid' => $q['jqid'], 'qtypeid' => 5, 'exstatus' => 1,'id'=>$xj))->execute();
                 }
                 else{
                     $idj = (new Query())
@@ -548,7 +571,7 @@ class IndexController extends Controller
                         array('jqid' => $idj, 'jqitem' => $Jlist[$i]['jitem'], 'jqans' => $Jlist[$i]['jans'], 'jqtail' => $Jlist[$i]['jtail'],
                             'jqrem' => $Jlist[$i]['jrem'], 'jqstatus' => 1,'userid'=>$auth))->execute();
                     $insertj = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $idj, 'qtypeid' => 5, 'exstatus' => 1))->execute();
+                        'qid' => $idj, 'qtypeid' => 5, 'exstatus' => 1,'id'=>$xj))->execute();
                 }
 
             }
@@ -562,10 +585,11 @@ class IndexController extends Controller
                     ->andWhere(['pqtail' => $Plist[$i]['ptail']])
                     ->andWhere(['pqrem' => $Plist[$i]['prem']])
                     ->one();
+                $xp = $this->NumItem($id)+1;
                 if($q)
                 {
                     $insertp = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $q['pqid'], 'qtypeid' => 3, 'exstatus' => 1))->execute();
+                        'qid' => $q['pqid'], 'qtypeid' => 3, 'exstatus' => 1,'id'=>$xp))->execute();
                 }
                 else{
                     $idp = (new Query())
@@ -577,7 +601,7 @@ class IndexController extends Controller
                         array('pqid' => $idp, 'pqitem' => $Plist[$i]['pitem'], 'pqans' => $Plist[$i]['pans'], 'pqtail' => $Plist[$i]['ptail'],
                             'pqrem' => $Plist[$i]['prem'], 'pqstatus' => 1,'userid'=>$auth))->execute();
                     $insertp = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $idp, 'qtypeid' => 3, 'exstatus' => 1))->execute();
+                        'qid' => $idp, 'qtypeid' => 3, 'exstatus' => 1,'id'=>$xp))->execute();
                 }
             }
             for($i=0;$i<count($CMlist);$i++)
@@ -592,10 +616,11 @@ class IndexController extends Controller
                     ->andWhere(['mqtail'=>$CMlist[$i]['mtail']])
                     ->andWhere(['mqrem'=>$CMlist[$i]['mrem']])
                     ->one();
+                $xcm = $this->NumItem($id)+1;
                 if($q)
                 {
                     $insertm = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $q['mqid'], 'qtypeid' => 4, 'exstatus' => 1))->execute();
+                        'qid' => $q['mqid'], 'qtypeid' => 4, 'exstatus' => 1,'id'=>$xcm))->execute();
                 }
                 else{
                     $idcm = (new Query())
@@ -608,7 +633,7 @@ class IndexController extends Controller
                         array('mqid'=>$idcm,'mqitem'=>$CMlist[$i]['mitem'],'mqcho'=>$op,'mqans'=>$CMlist[$i]['mans'],'mqtail'=>$CMlist[$i]['mtail'],
                             'mqrem'=>$CMlist[$i]['mrem'],'mqstatus'=>1,'userid'=>$auth))->execute();
                     $insertm = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
-                        'qid' => $idcm, 'qtypeid' => 4, 'exstatus' => 1))->execute();
+                        'qid' => $idcm, 'qtypeid' => 4, 'exstatus' => 1,'id'=>$xcm))->execute();
                 }
             }
 
