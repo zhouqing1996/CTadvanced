@@ -6,22 +6,22 @@ use yii\db\Query;
 use \yii\web\Controller;
 
 
-class MYPDF extends TCPDF {
-
-    //Page header
-    public function Header() {
-        $this->SetFont('stsongstdlight','',10);
-        $this->Write(10,'试卷详细信息','',false,'C');
-        $this->Ln(20);
-    }
-
-    // Page footer
-    public function Footer() {
-        $this->SetY(-15);
-        $this->SetFont('stsongstdlight','',10);
-        $this->Cell(0,10,'第'.$this->PageNo().'页',0,0,'R');
-    }
-}
+//class MYPDF extends TCPDF {
+//
+//    //Page header
+//    public function Header() {
+//        $this->SetFont('stsongstdlight','',10);
+//        $this->Write(10,'试卷详细信息','',false,'C');
+//        $this->Ln(20);
+//    }
+//
+//    // Page footer
+//    public function Footer() {
+//        $this->SetY(-15);
+//        $this->SetFont('stsongstdlight','',10);
+//        $this->Cell(0,10,'第'.$this->PageNo().'页',0,0,'R');
+//    }
+//}
 
 class DownloadController extends Controller
 {
@@ -282,6 +282,6 @@ class DownloadController extends Controller
         $pdf->Output($path,'F');
         $url=explode('htdocs',$path);
         $url='http://127.0.0.1'.$url[1];
-        return array('data'=>$url,'msg'=>'试卷pdf下载');
+        return array('data'=>[$url,$query['exname']],'msg'=>'试卷pdf下载');
     }
 }

@@ -14,6 +14,7 @@ use yii\common\models\Examtail;
  */
 class TeacherController extends Controller
 {
+
     /*
      * 查看全部的试卷
      * 标志：flag
