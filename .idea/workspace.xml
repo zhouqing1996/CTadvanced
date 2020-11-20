@@ -24,12 +24,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9e9d69d1-ca5a-4f0c-90a7-011e8930b17b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/3.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/files/3.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/4.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/files/4.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/DownloadController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/DownloadController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/TeacherController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/TeacherController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,7 +144,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Flow/Yii" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -224,6 +218,8 @@
       <workItem from="1605356812819" duration="18000" />
       <workItem from="1605507707569" duration="1160000" />
       <workItem from="1605508900928" duration="4369000" />
+      <workItem from="1605777763268" duration="598000" />
+      <workItem from="1605863545924" duration="1227000" />
     </task>
     <servers />
   </component>
