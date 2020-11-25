@@ -106,7 +106,7 @@ class BookController extends Controller
             return array("data"=>[$query],"msg"=>"该图书已经添加过了");
         }
         $insertU = \Yii::$app->db->createCommand()->insert('book',array('bookid'=>$bookid,'bookname'=>$bookname,'publish'=>$publish,'author'=>$author,
-            'about'=>$about,'status'=>1,'userid'=>$auth))->execute();
+            'about'=>$about,'status'=>1,'userid'=>$auth,'err'=>0))->execute();
         if($insertU)
         {
             return array("data"=>[$bookname,$bookid],"msg"=>"图书添加成功");
@@ -272,7 +272,7 @@ class BookController extends Controller
             if($query == null)
             {
                 $insertU = \Yii::$app->db->createCommand()->insert('book',array('bookid'=>$id,'bookname'=>$name,'publish'=>$publish,'author'=>$author,
-                    'about'=>$about,'status'=>1,'userid'=>$auth))->execute();
+                    'about'=>$about,'status'=>1,'userid'=>$auth,'err'=>0))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

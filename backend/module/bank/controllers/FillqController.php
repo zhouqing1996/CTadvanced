@@ -106,7 +106,7 @@ class FillqController extends Controller
         } else {
             $updatec = \Yii::$app->db->createCommand()->insert('fillq',
                 array('fqid' => $id, 'fqitem' => $item, 'fqans' => $ans, 'fqtail' => $tail,
-                    'fqrem' => $rem, 'fqstatus' => 1,'userid'=>$auth))->execute();
+                    'fqrem' => $rem, 'fqstatus' => 1,'userid'=>$auth,'err'=>0))->execute();
             if ($updatec) {
                 return array("data" => $updatec, "msg" => "插入填空题成功");
             } else {
@@ -279,7 +279,7 @@ class FillqController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('fillq',
                     array('fqid'=>$id,'fqitem'=>$item,'fqans'=>$ans,'fqtail'=>$tail,
-                        'fqrem'=>$rem,'fqstatus'=>1,'userid'=>$auth))->execute();
+                        'fqrem'=>$rem,'fqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

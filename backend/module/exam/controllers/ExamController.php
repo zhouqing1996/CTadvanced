@@ -258,10 +258,6 @@ class ExamController extends Controller
 //提供参数：用户id,试题exid,作答次数：num
     public function Checkans($num,$uid,$eid)
     {
-//        $request = \Yii::$app->request;
-//        $num = $request->post('num');
-//        $uid = $request->post('uid');
-//        $eid = $request->post('eid');
         $query= (new Query())
             ->select('*')
             ->from('userans')
@@ -289,14 +285,24 @@ class ExamController extends Controller
                     if($query[$i]['ans']==$qc['cqans'])
                     {
                         $x = $x+1;
-                       $updatec = \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
-                           ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>1,'qid'=>$query[$i]['qid']])->execute();
+                        $gradec = 1;
+                        if($nw = $qc['err']<=0)
+                            $nw = 0;
+                        else{
+                            $nw = $qc['err']-1;
+                        }
                     }
                     else{
-                        $updatec = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
-                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>1,'qid'=>$query[$i]['qid']])->execute();
+//                        如果用户作答错误，在题库中错误系数err+1，用于推荐,正确则减一，如果为0 则不加不减
+                        $nw = $qc['err']+1;
+                        $gradec = 0;
+//                        $updatec = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
+//                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>1,'qid'=>$query[$i]['qid']])->execute();
                     }
-
+                    $updatec = \Yii::$app->db->createCommand()->update('userans',['grade'=>$gradec],
+                        ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>1,'qid'=>$query[$i]['qid']])->execute();
+                    $update_c =  \Yii::$app->db->createCommand()->update('chooseq',['err'=>$nw],
+                        ['cqid'=>$query[$i]['qid']])->execute();
                 }
                 else if($query[$i]['qtypeid']==2)
                 {
@@ -310,33 +316,51 @@ class ExamController extends Controller
                     if($query[$i]['ans']==$qf['fqans'])
                     {
                         $x = $x+1;
-                        $updatef = \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
-                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>2,'qid'=>$query[$i]['qid']])->execute();
+                        $gradef =1;
+                        if($nw = $qf['err']<=0)
+                            $nw = 0;
+                        else{
+                            $nw = $qf['err']-1;
+                        }
                     }
                     else{
-                        $updatef = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
-                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>2,'qid'=>$query[$i]['qid']])->execute();
+                        //                        如果用户作答错误，在题库中错误系数err+0.1，用于推荐
+                        $nw = $qf['err']+1;
+                        $gradef =0;
                     }
+                    $updatef = \Yii::$app->db->createCommand()->update('userans',['grade'=>$gradef],
+                        ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>2,'qid'=>$query[$i]['qid']])->execute();
+                    $update_f =  \Yii::$app->db->createCommand()->update('fillq',['err'=>$nw],
+                        ['fqid'=>$query[$i]['qid']])->execute();
                 }
                 else if($query[$i]['qtypeid']==3)
                 {
 //                  程序题
                     $qp = (new Query())
                         ->select('*')
-                        ->from('programq')
+                        ->from('program')
                         ->where(['pqid'=>$query[$i]['qid']])
                         ->one();
 //                    匹配答案，如果答案正确则返回值为1，错误为0
                     if($query[$i]['ans']==$qp['pqans'])
                     {
                         $x = $x+1;
-                        $updatep = \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
-                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>3,'qid'=>$query[$i]['qid']])->execute();
+                        $gradep = 1;
+                        if($nw = $qp['err']<=0)
+                            $nw = 0;
+                        else{
+                            $nw = $qp['err']-1;
+                        }
                     }
                     else{
-                        $updatep = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
-                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>3,'qid'=>$query[$i]['qid']])->execute();
+                        //                        如果用户作答错误，在题库中错误系数err+0.1，用于推荐
+                        $nw = $qp['err']+1;
+                        $gradep = 0;
                     }
+                    $updatep = \Yii::$app->db->createCommand()->update('userans',['grade'=>$gradep],
+                        ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>3,'qid'=>$query[$i]['qid']])->execute();
+                    $update_p =  \Yii::$app->db->createCommand()->update('program',['err'=>$nw],
+                        ['pqid'=>$query[$i]['qid']])->execute();
 
                 }
                 else if($query[$i]['qtypeid']==4)
@@ -356,13 +380,22 @@ class ExamController extends Controller
                     {
                         $x = $x+1;
                         $mgrade = 1;
+                        if($nw = $qm['err']<=0)
+                            $nw = 0;
+                        else{
+                            $nw = $qm['err']-1;
+                        }
                     }
                     else{
                         $mgrade = 0;
+                        //                        如果用户作答错误，在题库中错误系数err+0.1，用于推荐
+                        $nw = $qm['err']+1;
                     }
 //                    匹配答案，如果答案正确则返回值为1，错误为0
                     $updatem= \Yii::$app->db->createCommand()->update('userans',['grade'=>$mgrade],
                         ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>4,'qid'=>$query[$i]['qid']])->execute();
+                    $update_m =  \Yii::$app->db->createCommand()->update('choosem',['err'=>$nw],
+                        ['mqid'=>$query[$i]['qid']])->execute();
 //                    if($mgrade==1)
 //                    {
 //                        $x = $x+1;
@@ -387,13 +420,23 @@ class ExamController extends Controller
                     if($query[$i]['ans']==$qj['jqans'])
                     {
                         $x = $x+1;
-                        $updatej = \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
-                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>5,'qid'=>$query[$i]['qid']])->execute();
+                        $gradej = 1;
+                        if($nw = $qj['err']<=0)
+                            $nw = 0;
+                        else{
+                            $nw = $qj['err']-1;
+                        }
+
                     }
                     else{
-                        $updatej = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
-                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>5,'qid'=>$query[$i]['qid']])->execute();
+                        //                        如果用户作答错误，在题库中错误系数err+0.1，用于推荐
+                        $nw = $qj['err']+1;
+                        $gradej = 0;
                     }
+                    $updatej = \Yii::$app->db->createCommand()->update('userans',['grade'=>$gradej],
+                        ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>5,'qid'=>$query[$i]['qid']])->execute();
+                    $update_j =  \Yii::$app->db->createCommand()->update('judge',['err'=>$nw],
+                        ['jqid'=>$query[$i]['qid']])->execute();
                 }
             }
             return $x;
@@ -415,11 +458,21 @@ class ExamController extends Controller
             ->one();
         if($query)
         {
-            return $query['exname'];
+            return $query;
         }
         else{
             return array('data'=>[],'msg'=>'没有该试卷');
         }
+    }
+//    获取用户名
+    public function Username($id)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('user')
+            ->where(['id'=>$id])
+            ->andWhere(['status'=>1])
+            ->one();
     }
 //    获取用户作答的所有信息
 //提供参数 用户id:uid
@@ -437,7 +490,9 @@ class ExamController extends Controller
         {
             for($i=0;$i<count($query);$i++)
             {
-                $exname = $this->Examname($query[$i]['exid']);
+                $exname = $this->Examname($query[$i]['exid'])['exname'];
+                $auth = $this->Username($this->Examname($query[$i]['exid']))['username'];
+                $query[$i]['auth']=$auth;
                 $query[$i]['exname'] = $exname;
             }
             return array('data'=>$query,'msg'=>'查找成功');
@@ -827,5 +882,245 @@ class ExamController extends Controller
             return array('data'=>[],'msg'=>'没有该试卷');
         }
     }
+//    用户作答后的试题推荐，先查看用户作答过程中做错的题目和未做的题目，
+//再根据用户的作答情况推荐数据库中其他相似的题目，基于内容的推荐
+//参数：测试卷编号eid，用户编号uid，测试的次数num
+    public function UserANS($eid,$uid,$num)
+    {
+        //        试卷的全部试题
+        $all = (new Query())
+            ->select('*')
+            ->from('examtail')
+            ->where(['exid'=>$eid])
+            ->andWhere(['exstatus'=>1])
+            ->all();
+        //       用户作答的答案
+        $userlist = (new Query())
+            ->select('*')
+            ->from('userans')
+            ->where(['exid'=>$eid])
+            ->andWhere(['userid'=>$uid])
+            ->andWhere(['id'=>$num])
+            ->andWhere(['status'=>1])
+            ->all();
+        //用户做错的题目或者未做的题目
+        $list = [];
+        $n=0;
+        for($i=0;$i<count($all);$i++)
+        {
+//            判断是否作答,true表示没有作答
+            $flag = true;
+            for($j=0;$j<count($userlist);$j++)
+            {
+                if($all[$i]['qid']==$userlist[$j]['qid'] && $all[$i]['qtypeid']==$userlist[$j]['qtypeid'])
+                {
+                    $flag = false;
+                    if($userlist[$j]['grade']==0)
+                    {
+//                        做错的题目
+                        $list[$n]['num']=$userlist[$j]['id'];
+                        $list[$n]['exid']=$userlist[$j]['exid'];
+                        $list[$n]['qid']=$userlist[$j]['qid'];
+                        $list[$n]['qtypeid']=$userlist[$j]['qtypeid'];
+                        $list[$n]['ans'] = $userlist[$j]['ans'];
+                        $list[$n]['grade']=$userlist[$j]['grade'];
+                        $list[$n]['ctime']=$userlist[$j]['ctime'];
+                        $list[$n]['finishtime'] = $userlist[$j]['finishtime'];
+                        $n++;
+                    }
+                    break;
+                }
+                else{
+                    continue;
+                }
+            }
+            if($flag)
+            {
+                //            未做的题目
+                $list[$n]['num']=$num;
+                $list[$n]['exid']=$all[$i]['exid'];
+                $list[$n]['qid']=$all[$i]['qid'];
+                $list[$n]['qtypeid']=$all[$i]['qtypeid'];
+                $list[$n]['ans'] = '';
+                $list[$n]['grade']='未作答';
+                $list[$n]['ctime']='';
+                $list[$n]['finishtime'] = '';
+                $n++;
+            }
+        }
+        return array('data'=>$list,'msg'=>'用户的答题中未做或者做错的题目');
+    }
+//    对应知识点
+    public function Rem($list)
+    {
+        $rem =[];
+        for($i=0;$i<count($list);$i++)
+        {
+            switch ($list[$i]['qtypeid'])
+            {
+                case 1:
+                {
+                    $qc = (new Query())
+                        ->from('chooseq')
+                        ->where(['cqid'=>$list[$i]['qid']])
+                        ->one();
+                    array_push($rem,$qc['cqrem']);
+                    break;
+                }
+                case 2:
+                {
+                    $qf = (new Query())
+                        ->from('fillq')
+                        ->where(['fqid'=>$list[$i]['qid']])
+                        ->one();
+                    array_push($rem,$qf['fqrem']);
+                    break;
+                }
+                case 3:
+                {
+                    $qp = (new Query())
+                        ->from('program')
+                        ->where(['pqid'=>$list[$i]['qid']])
+                        ->one();
+                    array_push($rem,$qp['pqrem']);
+                    break;
+                }
+                case 4:
+                {
+                    $qm = (new Query())
+                        ->from('choosem')
+                        ->where(['mqid'=>$list[$i]['qid']])
+                        ->one();
+                    array_push($rem,$qm['mqrem']);
+                    break;
+                }
+                case 5:
+                {
+                    $qj = (new Query())
+                        ->from('judge')
+                        ->where(['jqid'=>$list[$i]['qid']])
+                        ->one();
+                    array_push($rem,$qj['jqrem']);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        $rem = array_merge(array_unique($rem));
+        return array('data'=>$rem,'msg'=>'用户做错题目的知识点');
+    }
+//    相关知识查找
+    public function MoHuSearch($name)
+    {
+        $list = [];
+        $qc = (new Query())
+            ->select('*')
+            ->from('chooseq')
+            ->where(['or',['like','cqrem',$name]])
+            ->andWhere(['cqstatus'=>1])
+            ->all();
+        for($i=0;$i<count($qc);$i++)
+        {
+            $li['id']=$qc[$i]['cqid'];
+            $li['item'] = $qc[$i]['cqitem'];
+            $li['typeid']=1;
+            $li['err']=$qc[$i]['err'];
+            array_push($list,$li);
+        }
+        $qf = (new Query())
+            ->select('*')
+            ->from('fillq')
+            ->where(['or',['like','fqrem',$name]])
+            ->andWhere(['fqstatus'=>1])
+            ->all();
+        for($i=0;$i<count($qf);$i++)
+        {
+            $li['id']=$qf[$i]['fqid'];
+            $li['item'] = $qf[$i]['fqitem'];
+            $li['typeid']=2;
+            $li['err']=$qf[$i]['err'];
+            array_push($list,$li);
+        }
+        $qp = (new Query())
+            ->select('*')
+            ->from('program')
+            ->where(['or',['like','pqrem',$name]])
+            ->andWhere(['pqstatus'=>1])
+            ->all();
+        for($i=0;$i<count($qp);$i++)
+        {
+            $li['id']=$qp[$i]['pqid'];
+            $li['item'] = $qp[$i]['pqitem'];
+            $li['typeid']=3;
+            $li['err']=$qp[$i]['err'];
+            array_push($list,$li);
+        }
+        $qm = (new Query())
+            ->select('*')
+            ->from('choosem')
+            ->where(['or',['like','mqrem',$name]])
+            ->andWhere(['mqstatus'=>1])
+            ->all();
+        for($i=0;$i<count($qm);$i++)
+        {
+            $li['id']=$qm[$i]['mqid'];
+            $li['item'] = $qm[$i]['mqitem'];
+            $li['typeid']=4;
+            $li['err']=$qm[$i]['err'];
+            array_push($list,$li);
+        }
+        $qj = (new Query())
+            ->select('*')
+            ->from('judge')
+            ->where(['or',['like','jqrem',$name]])
+            ->andWhere(['jqstatus'=>1])
+            ->all();
+        for($i=0;$i<count($qj);$i++)
+        {
+            $li['id']=$qj[$i]['jqid'];
+            $li['item'] = $qj[$i]['jqitem'];
+            $li['typeid']=5;
+            $li['err']=$qj[$i]['err'];
+            array_push($list,$li);
+        }
+        $list = array_merge($list);
+        return array('data'=>$list,'msg'=>'相似知识点的集合');
+
+    }
+//    推荐
+    public function actionRecommd()
+    {
+        $request = \Yii::$app->request;
+//        $eid = $request->post('eid');
+//        $uid = $request->post('uid');
+//        $num = $request->post('num');
+        $eid=4;
+        $uid=13;
+        $num=2;
+        $list = $this->UserANS($eid,$uid,$num)['data'];
+        $rem = $this->Rem($list)['data'];
+//        推荐列表
+        $ReList = [];
+        for($i=0;$i<count($rem);$i++)
+        {
+            $mon = $this->MoHuSearch($rem[$i])['data'];
+            for($j=0;$j<count($mon);$j++)
+            {
+                array_push($ReList,$mon[$j]);
+            }
+        }
+//        按照err指标排序
+        foreach ($ReList as $key=>$value)
+        {
+            $flag[]=$value['err'];
+        }
+//        降序排列
+        array_multisort($flag,SORT_DESC,$ReList);
+//        只取前五条数据推荐
+        $ReList = array_slice($ReList,0,5);
+        return array('data'=>$ReList,'msg'=>'推荐题目');
+    }
+//  书籍推荐
 
 }

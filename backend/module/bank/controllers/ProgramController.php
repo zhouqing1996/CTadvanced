@@ -106,7 +106,7 @@ class ProgramController extends Controller
         } else {
             $updatec = \Yii::$app->db->createCommand()->insert('program',
                 array('pqid' => $id, 'pqitem' => $item, 'pqans' => $ans, 'pqtail' => $tail,
-                    'pqrem' => $rem, 'pqstatus' => 1,'userid'=>$auth))->execute();
+                    'pqrem' => $rem, 'pqstatus' => 1,'userid'=>$auth,'err'=>0))->execute();
             if ($updatec) {
                 return array("data" => $updatec, "msg" => "插入程序题成功");
             } else {
@@ -279,7 +279,7 @@ class ProgramController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('program',
                     array('pqid'=>$id,'pqitem'=>$item,'pqans'=>$ans,'pqtail'=>$tail,
-                        'pqrem'=>$rem,'pqstatus'=>1,'userid'=>$auth))->execute();
+                        'pqrem'=>$rem,'pqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

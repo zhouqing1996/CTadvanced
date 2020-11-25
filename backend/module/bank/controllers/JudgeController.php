@@ -106,7 +106,7 @@ class JudgeController extends Controller
         } else {
             $updatec = \Yii::$app->db->createCommand()->insert('judge',
                 array('jqid' => $id, 'jqitem' => $item, 'jqans' => $ans, 'jqtail' => $tail,
-                    'jqrem' => $rem, 'jqstatus' => 1,'userid'=>$auth))->execute();
+                    'jqrem' => $rem, 'jqstatus' => 1,'userid'=>$auth,'err'=>0))->execute();
             if ($updatec) {
                 return array("data" => $updatec, "msg" => "插入判断题成功");
             } else {
@@ -279,7 +279,7 @@ class JudgeController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('judge',
                     array('jqid'=>$id,'jqitem'=>$item,'jqans'=>$ans,'jqtail'=>$tail,
-                        'jqrem'=>$rem,'jqstatus'=>1,'userid'=>$auth))->execute();
+                        'jqrem'=>$rem,'jqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

@@ -56,10 +56,8 @@ class TeacherController extends Controller
 
         for ($l = 0; $l < count($userid); $l++) {
             $num = $this->NUm($userid[$l], $exid);
-//                return array('data'=>$userid[$l],'msg'=>'sss');
             //            选出同一个人在一份试卷的作答情况
             for ($x = 1; $x <= $num; $x++) {
-//                    return array('data'=>[$userid[$l],$exid,$x],'msg'=>'333');
                 $query = (new Query())
                     ->select('*')
                     ->from('userans')
@@ -67,7 +65,6 @@ class TeacherController extends Controller
                     ->andWhere(['id' => $x])
                     ->andWhere(['exid' => $exid])
                     ->all();
-//                    return array('data'=>[$query,$all],'msg'=>'333');
                 for ($j = 0; $j < count($all); $j++) {
                     $flag = true;
                     for ($m = 0; $m < count($query); $m++) {

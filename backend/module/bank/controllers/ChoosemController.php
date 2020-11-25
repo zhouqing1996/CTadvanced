@@ -122,7 +122,7 @@ class ChoosemController extends Controller
         {
             $updatec = \Yii::$app->db->createCommand()->insert('choosem',
                 array('mqid'=>$id,'mqitem'=>$item,'mqcho'=>$op,'mqans'=>$ans,'mqtail'=>$tail,
-                    'mqrem'=>$rem,'mqstatus'=>1,'userid'=>$auth))->execute();
+                    'mqrem'=>$rem,'mqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
             if($updatec)
             {
                 return array("data"=>$updatec,"msg"=>"插入多选题成功");
@@ -443,7 +443,7 @@ class ChoosemController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('choosem',
                     array('mqid'=>$id,'mqitem'=>$item,'mqcho'=>$op,'mqans'=>$ans,'mqtail'=>$tail,
-                        'mqrem'=>$rem,'mqstatus'=>1,'userid'=>$auth))->execute();
+                        'mqrem'=>$rem,'mqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");

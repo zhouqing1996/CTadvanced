@@ -78,7 +78,80 @@ class ExerciseController extends Controller
             return array("data"=>$flag,"msg"=>"输入错误");
         }
     }
-
+    /*
+     * 模糊查找，参数flag,搜索内容：name
+     */
+    public function actionSearch()
+    {
+        $request = \Yii::$app->request;
+        $flag = $request->post('id');
+        $name = $request->post('name');
+        switch ($flag){
+            case 1:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('chooseq')
+                    ->where(['or',
+                        ['like','cqitem',$name],
+                        ['like','cqcho',$name],
+                        ['like','cqtail',$name],
+                        ['like','cqrem',$name]])
+                    ->andWhere(['cqstatus'=>1])
+                    ->all();
+                return array('data'=>$query,'msg'=>'查询'.$name.'选择题');
+                break;
+            case 2:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('fillq')
+                    ->where(['or',
+                        ['like','fqitem',$name],
+                        ['like','fqtail',$name],
+                        ['like','fqrem',$name]])
+                    ->andWhere(['fqstatus'=>1])
+                    ->all();
+                return array('data'=>$query,'msg'=>'查询'.$name.'填空题');
+                break;
+            case 3:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('program')
+                    ->where(['or',
+                        ['like','pqitem',$name],
+                        ['like','pqtail',$name],
+                        ['like','pqrem',$name]])
+                    ->andWhere(['pqstatus'=>1])
+                    ->all();
+                return array('data'=>$query,'msg'=>'查询'.$name.'程序题');
+                break;
+            case 4:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('choosem')
+                    ->where(['or',
+                        ['like','mqitem',$name],
+                        ['like','mqcho',$name],
+                        ['like','mqtail',$name],
+                        ['like','mqrem',$name]])
+                    ->andWhere(['mqstatus'=>1])
+                    ->all();
+                return array('data'=>$query,'msg'=>'查询'.$name.'多选题');
+                break;
+            case 5:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('judge')
+                    ->where(['or',
+                        ['like','jqitem',$name],
+                        ['like','jqtail',$name],
+                        ['like','jqrem',$name]])
+                    ->andWhere(['jqstatus'=>1])
+                    ->all();
+                return array('data'=>$query,'msg'=>'查询'.$name.'判断题');
+                break;
+            default:break;
+        }
+    }
     /*
      * 提交对应的题目答案
      * flag:标志

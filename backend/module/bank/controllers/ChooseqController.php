@@ -122,7 +122,7 @@ class ChooseqController extends Controller
         {
             $updatec = \Yii::$app->db->createCommand()->insert('chooseq',
                 array('cqid'=>$id,'cqitem'=>$item,'cqcho'=>$op,'cqans'=>$ans,'cqtail'=>$tail,
-                    'cqrem'=>$rem,'cqstatus'=>1,'userid'=>$auth))->execute();
+                    'cqrem'=>$rem,'cqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
             if($updatec)
             {
                 return array("data"=>$updatec,"msg"=>"插入选择题成功");
@@ -443,7 +443,7 @@ class ChooseqController extends Controller
             {
                 $updatec = \Yii::$app->db->createCommand()->insert('chooseq',
                     array('cqid'=>$id,'cqitem'=>$item,'cqcho'=>$op,'cqans'=>$ans,'cqtail'=>$tail,
-                        'cqrem'=>$rem,'cqstatus'=>1,'userid'=>$auth))->execute();
+                        'cqrem'=>$rem,'cqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");
