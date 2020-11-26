@@ -3,6 +3,7 @@
 namespace backend\module\exam\controllers;
 
 use backend\module\home\controllers\UserController;
+use phpDocumentor\Reflection\Types\This;
 use yii\web\Controller;
 use yii\common\models\Exam;
 use yii\common\models\Examtail;
@@ -254,6 +255,16 @@ class ExamController extends Controller
             return array('data'=>[$update],"msg"=>$uid."作答".$eid."完成");
         }
     }
+//    书籍对应的知识点查找
+    public function Book($name)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('bookitem')
+            ->where(['or',['like','bookrem',$name]])
+            ->andWhere(['bstatus'=>1])
+            ->all();
+    }
 //    用户作答完成，实现用户答案与正确答案的匹配
 //提供参数：用户id,试题exid,作答次数：num
     public function Checkans($num,$uid,$eid)
@@ -267,7 +278,6 @@ class ExamController extends Controller
             ->all();
 //        初始判分，每对一题，增加1
         $x = 0;
-
         if($query)
         {
             for($i=0;$i<count($query);$i++)
@@ -281,6 +291,8 @@ class ExamController extends Controller
                         ->from('chooseq')
                         ->where(['cqid'=>$query[$i]['qid']])
                         ->one();
+//                    查找书籍
+                    $bookRem = $this->Book($qc['cqrem']);
 //                    匹配答案，如果答案正确则返回值为1，错误为0
                     if($query[$i]['ans']==$qc['cqans'])
                     {
@@ -291,18 +303,32 @@ class ExamController extends Controller
                         else{
                             $nw = $qc['err']-1;
                         }
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            if($bookRem[$k]['err']>0)
+                            {
+                                $errb = $bookRem[$k]['err']-1;
+                            }
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     else{
 //                        如果用户作答错误，在题库中错误系数err+1，用于推荐,正确则减一，如果为0 则不加不减
                         $nw = $qc['err']+1;
                         $gradec = 0;
-//                        $updatec = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
-//                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>1,'qid'=>$query[$i]['qid']])->execute();
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            $errb = $bookRem[$k]['err']+1;
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     $updatec = \Yii::$app->db->createCommand()->update('userans',['grade'=>$gradec],
                         ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>1,'qid'=>$query[$i]['qid']])->execute();
                     $update_c =  \Yii::$app->db->createCommand()->update('chooseq',['err'=>$nw],
                         ['cqid'=>$query[$i]['qid']])->execute();
+
                 }
                 else if($query[$i]['qtypeid']==2)
                 {
@@ -312,6 +338,7 @@ class ExamController extends Controller
                         ->from('fillq')
                         ->where(['fqid'=>$query[$i]['qid']])
                         ->one();
+                    $bookRem = $this->Book($qf['fqrem']);
 //                    匹配答案，如果答案正确则返回值为1，错误为0
                     if($query[$i]['ans']==$qf['fqans'])
                     {
@@ -322,11 +349,26 @@ class ExamController extends Controller
                         else{
                             $nw = $qf['err']-1;
                         }
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            if($bookRem[$k]['err']>0)
+                            {
+                                $errb = $bookRem[$k]['err']-1;
+                            }
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     else{
                         //                        如果用户作答错误，在题库中错误系数err+0.1，用于推荐
                         $nw = $qf['err']+1;
                         $gradef =0;
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            $errb = $bookRem[$k]['err']+1;
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     $updatef = \Yii::$app->db->createCommand()->update('userans',['grade'=>$gradef],
                         ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>2,'qid'=>$query[$i]['qid']])->execute();
@@ -341,6 +383,7 @@ class ExamController extends Controller
                         ->from('program')
                         ->where(['pqid'=>$query[$i]['qid']])
                         ->one();
+                    $bookRem = $this->Book($qp['pqrem']);
 //                    匹配答案，如果答案正确则返回值为1，错误为0
                     if($query[$i]['ans']==$qp['pqans'])
                     {
@@ -351,11 +394,26 @@ class ExamController extends Controller
                         else{
                             $nw = $qp['err']-1;
                         }
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            if($bookRem[$k]['err']>0)
+                            {
+                                $errb = $bookRem[$k]['err']-1;
+                            }
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     else{
                         //                        如果用户作答错误，在题库中错误系数err+0.1，用于推荐
                         $nw = $qp['err']+1;
                         $gradep = 0;
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            $errb = $bookRem[$k]['err']+1;
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     $updatep = \Yii::$app->db->createCommand()->update('userans',['grade'=>$gradep],
                         ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>3,'qid'=>$query[$i]['qid']])->execute();
@@ -371,6 +429,7 @@ class ExamController extends Controller
                         ->from('choosem')
                         ->where(['mqid'=>$query[$i]['qid']])
                         ->one();
+                    $bookRem = $this->Book($qm['mqrem']);
                     $s = $qm['mqans'];
                     $exp1 = explode('---',$s);
                     $exp2 = explode('---',$query[$i]['ans']);
@@ -385,28 +444,32 @@ class ExamController extends Controller
                         else{
                             $nw = $qm['err']-1;
                         }
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            if($bookRem[$k]['err']>0)
+                            {
+                                $errb = $bookRem[$k]['err']-1;
+                            }
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     else{
                         $mgrade = 0;
-                        //                        如果用户作答错误，在题库中错误系数err+0.1，用于推荐
+                        //                        如果用户作答错误，在题库中错误系数err+1，用于推荐
                         $nw = $qm['err']+1;
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            $errb = $bookRem[$k]['err']+1;
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
 //                    匹配答案，如果答案正确则返回值为1，错误为0
                     $updatem= \Yii::$app->db->createCommand()->update('userans',['grade'=>$mgrade],
                         ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>4,'qid'=>$query[$i]['qid']])->execute();
                     $update_m =  \Yii::$app->db->createCommand()->update('choosem',['err'=>$nw],
                         ['mqid'=>$query[$i]['qid']])->execute();
-//                    if($mgrade==1)
-//                    {
-//                        $x = $x+1;
-//                        $updatem= \Yii::$app->db->createCommand()->update('userans',['grade'=>1],
-//                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>4,'qid'=>$query[$i]['qid']])->execute();
-//                    }
-//                    else{
-//                        $updatem = \Yii::$app->db->createCommand()->update('userans',['grade'=>0],
-//                            ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>4,'qid'=>$query[$i]['qid']])->execute();
-//                    }
-
                 }
                 else if($query[$i]['qtypeid']==5)
                 {
@@ -416,6 +479,7 @@ class ExamController extends Controller
                         ->from('judge')
                         ->where(['jqid'=>$query[$i]['qid']])
                         ->one();
+                    $bookRem = $this->Book($qj['jqrem']);
 //                    匹配答案，如果答案正确则返回值为1，错误为0
                     if($query[$i]['ans']==$qj['jqans'])
                     {
@@ -426,12 +490,26 @@ class ExamController extends Controller
                         else{
                             $nw = $qj['err']-1;
                         }
-
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            if($bookRem[$k]['err']>0)
+                            {
+                                $errb = $bookRem[$k]['err']-1;
+                            }
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     else{
                         //                        如果用户作答错误，在题库中错误系数err+0.1，用于推荐
                         $nw = $qj['err']+1;
                         $gradej = 0;
+                        for($k=0;$k<count($bookRem);$k++)
+                        {
+                            $errb = $bookRem[$k]['err']+1;
+                            $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
+                                ['id'=>$bookRem[$k]['id']])->execute();
+                        }
                     }
                     $updatej = \Yii::$app->db->createCommand()->update('userans',['grade'=>$gradej],
                         ['id'=>$num,'userid'=>$uid,'exid'=>$eid,'qtypeid'=>5,'qid'=>$query[$i]['qid']])->execute();
@@ -876,7 +954,12 @@ class ExamController extends Controller
 
                 }
             }
-            return array('data'=>[$list,$query,$exNum,$corNum],'msg'=>'获取成功');
+//            知识点，试题，书籍推荐
+            $x = $this->Recommd($eid,$uid,$num)['data'];
+            $rem=$x[0];
+            $Bank = $x[1];
+            $Book = $x[2];
+            return array('data'=>[$list,$query,$exNum,$corNum,$rem,$Bank,$Book],'msg'=>'获取成功');
         }
         else{
             return array('data'=>[],'msg'=>'没有该试卷');
@@ -964,7 +1047,10 @@ class ExamController extends Controller
                         ->from('chooseq')
                         ->where(['cqid'=>$list[$i]['qid']])
                         ->one();
-                    array_push($rem,$qc['cqrem']);
+                    $x['id'] = $qc['cqid'];
+                    $x['type'] = 1;
+                    $x['rem'] = $qc['cqrem'];
+                    array_push($rem,$x);
                     break;
                 }
                 case 2:
@@ -973,7 +1059,10 @@ class ExamController extends Controller
                         ->from('fillq')
                         ->where(['fqid'=>$list[$i]['qid']])
                         ->one();
-                    array_push($rem,$qf['fqrem']);
+                    $x['id'] = $qf['fqid'];
+                    $x['type'] = 2;
+                    $x['rem'] = $qf['fqrem'];
+                    array_push($rem,$x);
                     break;
                 }
                 case 3:
@@ -982,7 +1071,10 @@ class ExamController extends Controller
                         ->from('program')
                         ->where(['pqid'=>$list[$i]['qid']])
                         ->one();
-                    array_push($rem,$qp['pqrem']);
+                    $x['id'] = $qp['pqid'];
+                    $x['type'] = 3;
+                    $x['rem'] = $qp['pqrem'];
+                    array_push($rem,$x);
                     break;
                 }
                 case 4:
@@ -991,7 +1083,10 @@ class ExamController extends Controller
                         ->from('choosem')
                         ->where(['mqid'=>$list[$i]['qid']])
                         ->one();
-                    array_push($rem,$qm['mqrem']);
+                    $x['id'] = $qm['mqid'];
+                    $x['type'] = 4;
+                    $x['rem'] = $qm['mqrem'];
+                    array_push($rem,$x);
                     break;
                 }
                 case 5:
@@ -1000,127 +1095,524 @@ class ExamController extends Controller
                         ->from('judge')
                         ->where(['jqid'=>$list[$i]['qid']])
                         ->one();
-                    array_push($rem,$qj['jqrem']);
+                    $x['id'] = $qj['jqid'];
+                    $x['type'] = 5;
+                    $x['rem'] = $qj['jqrem'];
+                    array_push($rem,$x);
                     break;
                 }
                 default:
                     break;
             }
         }
-        $rem = array_merge(array_unique($rem));
+        $rem = array_merge($rem);
         return array('data'=>$rem,'msg'=>'用户做错题目的知识点');
     }
-//    相关知识查找
-    public function MoHuSearch($name)
+//    相关知识查找,参数：题目id,知识点，题目；类型
+    public function MoHuSearch($lis)
     {
         $list = [];
-        $qc = (new Query())
-            ->select('*')
-            ->from('chooseq')
-            ->where(['or',['like','cqrem',$name]])
-            ->andWhere(['cqstatus'=>1])
-            ->all();
-        for($i=0;$i<count($qc);$i++)
+        switch ($lis['type'])
         {
-            $li['id']=$qc[$i]['cqid'];
-            $li['item'] = $qc[$i]['cqitem'];
-            $li['typeid']=1;
-            $li['err']=$qc[$i]['err'];
-            array_push($list,$li);
-        }
-        $qf = (new Query())
-            ->select('*')
-            ->from('fillq')
-            ->where(['or',['like','fqrem',$name]])
-            ->andWhere(['fqstatus'=>1])
-            ->all();
-        for($i=0;$i<count($qf);$i++)
-        {
-            $li['id']=$qf[$i]['fqid'];
-            $li['item'] = $qf[$i]['fqitem'];
-            $li['typeid']=2;
-            $li['err']=$qf[$i]['err'];
-            array_push($list,$li);
-        }
-        $qp = (new Query())
-            ->select('*')
-            ->from('program')
-            ->where(['or',['like','pqrem',$name]])
-            ->andWhere(['pqstatus'=>1])
-            ->all();
-        for($i=0;$i<count($qp);$i++)
-        {
-            $li['id']=$qp[$i]['pqid'];
-            $li['item'] = $qp[$i]['pqitem'];
-            $li['typeid']=3;
-            $li['err']=$qp[$i]['err'];
-            array_push($list,$li);
-        }
-        $qm = (new Query())
-            ->select('*')
-            ->from('choosem')
-            ->where(['or',['like','mqrem',$name]])
-            ->andWhere(['mqstatus'=>1])
-            ->all();
-        for($i=0;$i<count($qm);$i++)
-        {
-            $li['id']=$qm[$i]['mqid'];
-            $li['item'] = $qm[$i]['mqitem'];
-            $li['typeid']=4;
-            $li['err']=$qm[$i]['err'];
-            array_push($list,$li);
-        }
-        $qj = (new Query())
-            ->select('*')
-            ->from('judge')
-            ->where(['or',['like','jqrem',$name]])
-            ->andWhere(['jqstatus'=>1])
-            ->all();
-        for($i=0;$i<count($qj);$i++)
-        {
-            $li['id']=$qj[$i]['jqid'];
-            $li['item'] = $qj[$i]['jqitem'];
-            $li['typeid']=5;
-            $li['err']=$qj[$i]['err'];
-            array_push($list,$li);
+            case 1:
+                $qc = (new Query())
+                    ->select('*')
+                    ->from('chooseq')
+                    ->where(['or',['like','cqrem',$lis['rem']]])
+                    ->andWhere(['<>','cqid',$lis['id']])
+                    ->andWhere(['cqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qc);$i++)
+                {
+                    $li['id']=$qc[$i]['cqid'];
+                    $li['item'] = $qc[$i]['cqitem'];
+                    $li['typeid']=1;
+                    $li['err']=$qc[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qf = (new Query())
+                    ->select('*')
+                    ->from('fillq')
+                    ->where(['or',['like','fqrem',$lis['rem']]])
+                    ->andWhere(['fqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qf);$i++)
+                {
+                    $li['id']=$qf[$i]['fqid'];
+                    $li['item'] = $qf[$i]['fqitem'];
+                    $li['typeid']=2;
+                    $li['err']=$qf[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qp = (new Query())
+                    ->select('*')
+                    ->from('program')
+                    ->where(['or',['like','pqrem',$lis['rem']]])
+                    ->andWhere(['pqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qp);$i++)
+                {
+                    $li['id']=$qp[$i]['pqid'];
+                    $li['item'] = $qp[$i]['pqitem'];
+                    $li['typeid']=3;
+                    $li['err']=$qp[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qm = (new Query())
+                    ->select('*')
+                    ->from('choosem')
+                    ->where(['or',['like','mqrem',$lis['rem']]])
+                    ->andWhere(['mqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qm);$i++)
+                {
+                    $li['id']=$qm[$i]['mqid'];
+                    $li['item'] = $qm[$i]['mqitem'];
+                    $li['typeid']=4;
+                    $li['err']=$qm[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qj = (new Query())
+                    ->select('*')
+                    ->from('judge')
+                    ->where(['or',['like','jqrem',$lis['rem']]])
+                    ->andWhere(['jqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qj);$i++)
+                {
+                    $li['id']=$qj[$i]['jqid'];
+                    $li['item'] = $qj[$i]['jqitem'];
+                    $li['typeid']=5;
+                    $li['err']=$qj[$i]['err'];
+                    array_push($list,$li);
+                }
+                break;
+            case 2:
+                $qc = (new Query())
+                    ->select('*')
+                    ->from('chooseq')
+                    ->where(['or',['like','cqrem',$lis['rem']]])
+                    ->andWhere(['cqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qc);$i++)
+                {
+                    $li['id']=$qc[$i]['cqid'];
+                    $li['item'] = $qc[$i]['cqitem'];
+                    $li['typeid']=1;
+                    $li['err']=$qc[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qf = (new Query())
+                    ->select('*')
+                    ->from('fillq')
+                    ->where(['or',['like','fqrem',$lis['rem']]])
+                    ->andWhere(['<>','fqid',$lis['id']])
+                    ->andWhere(['fqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qf);$i++)
+                {
+                    $li['id']=$qf[$i]['fqid'];
+                    $li['item'] = $qf[$i]['fqitem'];
+                    $li['typeid']=2;
+                    $li['err']=$qf[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qp = (new Query())
+                    ->select('*')
+                    ->from('program')
+                    ->where(['or',['like','pqrem',$lis['rem']]])
+                    ->andWhere(['pqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qp);$i++)
+                {
+                    $li['id']=$qp[$i]['pqid'];
+                    $li['item'] = $qp[$i]['pqitem'];
+                    $li['typeid']=3;
+                    $li['err']=$qp[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qm = (new Query())
+                    ->select('*')
+                    ->from('choosem')
+                    ->where(['or',['like','mqrem',$lis['rem']]])
+                    ->andWhere(['mqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qm);$i++)
+                {
+                    $li['id']=$qm[$i]['mqid'];
+                    $li['item'] = $qm[$i]['mqitem'];
+                    $li['typeid']=4;
+                    $li['err']=$qm[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qj = (new Query())
+                    ->select('*')
+                    ->from('judge')
+                    ->where(['or',['like','jqrem',$lis['rem']]])
+                    ->andWhere(['jqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qj);$i++)
+                {
+                    $li['id']=$qj[$i]['jqid'];
+                    $li['item'] = $qj[$i]['jqitem'];
+                    $li['typeid']=5;
+                    $li['err']=$qj[$i]['err'];
+                    array_push($list,$li);
+                }
+                break;
+            case 3:
+                $qc = (new Query())
+                    ->select('*')
+                    ->from('chooseq')
+                    ->where(['or',['like','cqrem',$lis['rem']]])
+                    ->andWhere(['cqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qc);$i++)
+                {
+                    $li['id']=$qc[$i]['cqid'];
+                    $li['item'] = $qc[$i]['cqitem'];
+                    $li['typeid']=1;
+                    $li['err']=$qc[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qf = (new Query())
+                    ->select('*')
+                    ->from('fillq')
+                    ->where(['or',['like','fqrem',$lis['rem']]])
+                    ->andWhere(['fqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qf);$i++)
+                {
+                    $li['id']=$qf[$i]['fqid'];
+                    $li['item'] = $qf[$i]['fqitem'];
+                    $li['typeid']=2;
+                    $li['err']=$qf[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qp = (new Query())
+                    ->select('*')
+                    ->from('program')
+                    ->where(['or',['like','pqrem',$lis['rem']]])
+                    ->andWhere(['<>','pqid',$lis['id']])
+                    ->andWhere(['pqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qp);$i++)
+                {
+                    $li['id']=$qp[$i]['pqid'];
+                    $li['item'] = $qp[$i]['pqitem'];
+                    $li['typeid']=3;
+                    $li['err']=$qp[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qm = (new Query())
+                    ->select('*')
+                    ->from('choosem')
+                    ->where(['or',['like','mqrem',$lis['rem']]])
+                    ->andWhere(['mqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qm);$i++)
+                {
+                    $li['id']=$qm[$i]['mqid'];
+                    $li['item'] = $qm[$i]['mqitem'];
+                    $li['typeid']=4;
+                    $li['err']=$qm[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qj = (new Query())
+                    ->select('*')
+                    ->from('judge')
+                    ->where(['or',['like','jqrem',$lis['rem']]])
+                    ->andWhere(['jqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qj);$i++)
+                {
+                    $li['id']=$qj[$i]['jqid'];
+                    $li['item'] = $qj[$i]['jqitem'];
+                    $li['typeid']=5;
+                    $li['err']=$qj[$i]['err'];
+                    array_push($list,$li);
+                }
+                break;
+            case 4:
+                $qc = (new Query())
+                    ->select('*')
+                    ->from('chooseq')
+                    ->where(['or',['like','cqrem',$lis['rem']]])
+                    ->andWhere(['cqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qc);$i++)
+                {
+                    $li['id']=$qc[$i]['cqid'];
+                    $li['item'] = $qc[$i]['cqitem'];
+                    $li['typeid']=1;
+                    $li['err']=$qc[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qf = (new Query())
+                    ->select('*')
+                    ->from('fillq')
+                    ->where(['or',['like','fqrem',$lis['rem']]])
+                    ->andWhere(['fqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qf);$i++)
+                {
+                    $li['id']=$qf[$i]['fqid'];
+                    $li['item'] = $qf[$i]['fqitem'];
+                    $li['typeid']=2;
+                    $li['err']=$qf[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qp = (new Query())
+                    ->select('*')
+                    ->from('program')
+                    ->where(['or',['like','pqrem',$lis['rem']]])
+                    ->andWhere(['pqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qp);$i++)
+                {
+                    $li['id']=$qp[$i]['pqid'];
+                    $li['item'] = $qp[$i]['pqitem'];
+                    $li['typeid']=3;
+                    $li['err']=$qp[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qm = (new Query())
+                    ->select('*')
+                    ->from('choosem')
+                    ->where(['or',['like','mqrem',$lis['rem']]])
+                    ->andWhere(['<>','mqid',$lis['id']])
+                    ->andWhere(['mqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qm);$i++)
+                {
+                    $li['id']=$qm[$i]['mqid'];
+                    $li['item'] = $qm[$i]['mqitem'];
+                    $li['typeid']=4;
+                    $li['err']=$qm[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qj = (new Query())
+                    ->select('*')
+                    ->from('judge')
+                    ->where(['or',['like','jqrem',$lis['rem']]])
+                    ->andWhere(['jqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qj);$i++)
+                {
+                    $li['id']=$qj[$i]['jqid'];
+                    $li['item'] = $qj[$i]['jqitem'];
+                    $li['typeid']=5;
+                    $li['err']=$qj[$i]['err'];
+                    array_push($list,$li);
+                }
+                break;
+            case 5:
+                $qc = (new Query())
+                    ->select('*')
+                    ->from('chooseq')
+                    ->where(['or',['like','cqrem',$lis['rem']]])
+                    ->andWhere(['cqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qc);$i++)
+                {
+                    $li['id']=$qc[$i]['cqid'];
+                    $li['item'] = $qc[$i]['cqitem'];
+                    $li['typeid']=1;
+                    $li['err']=$qc[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qf = (new Query())
+                    ->select('*')
+                    ->from('fillq')
+                    ->where(['or',['like','fqrem',$lis['rem']]])
+                    ->andWhere(['fqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qf);$i++)
+                {
+                    $li['id']=$qf[$i]['fqid'];
+                    $li['item'] = $qf[$i]['fqitem'];
+                    $li['typeid']=2;
+                    $li['err']=$qf[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qp = (new Query())
+                    ->select('*')
+                    ->from('program')
+                    ->where(['or',['like','pqrem',$lis['rem']]])
+                    ->andWhere(['pqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qp);$i++)
+                {
+                    $li['id']=$qp[$i]['pqid'];
+                    $li['item'] = $qp[$i]['pqitem'];
+                    $li['typeid']=3;
+                    $li['err']=$qp[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qm = (new Query())
+                    ->select('*')
+                    ->from('choosem')
+                    ->where(['or',['like','mqrem',$lis['rem']]])
+                    ->andWhere(['mqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qm);$i++)
+                {
+                    $li['id']=$qm[$i]['mqid'];
+                    $li['item'] = $qm[$i]['mqitem'];
+                    $li['typeid']=4;
+                    $li['err']=$qm[$i]['err'];
+                    array_push($list,$li);
+                }
+                $qj = (new Query())
+                    ->select('*')
+                    ->from('judge')
+                    ->where(['or',['like','jqrem',$lis['rem']]])
+                    ->andWhere(['<>','jqid',$lis['id']])
+                    ->andWhere(['jqstatus'=>1])
+                    ->all();
+                for($i=0;$i<count($qj);$i++)
+                {
+                    $li['id']=$qj[$i]['jqid'];
+                    $li['item'] = $qj[$i]['jqitem'];
+                    $li['typeid']=5;
+                    $li['err']=$qj[$i]['err'];
+                    array_push($list,$li);
+                }
+                break;
+            default:break;
         }
         $list = array_merge($list);
         return array('data'=>$list,'msg'=>'相似知识点的集合');
-
+    }
+//    书籍id对应书名
+    public function BookName($id)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('book')
+            ->where(['bookid'=>$id])
+            ->andWhere(['status'=>1])
+            ->one();
+    }
+//    书籍知识点对应章节,参数：推荐知识点
+    public function BookRem($rem)
+    {
+//        不在推荐内容中的err-1
+        $list = [];
+//        不重复的推荐
+        $querys = [];
+        for($i=0;$i<count($rem);$i++)
+        {
+            $query = (new Query())
+                ->select('*')
+                ->from('bookitem')
+                ->where(['or',['like','bookrem',$rem[$i]['rem']]])
+                ->andWhere(['bstatus'=>1])
+                ->all();
+            for($j=0;$j<count($query);$j++)
+            {
+                array_push($querys,$query[$j]);
+            }
+        }
+//        return array('data'=>$querys,'msg'=>'图书推荐');
+        for($j=0;$j<count($querys);$j++)
+        {
+            $x['id']=$querys[$j]['id'];
+            $x['bookid']=$querys[$j]['bookid'];
+            $x['bookname'] = $querys[$j]['bookname'];
+            $x['item'] = $querys[$j]['bookitem'];
+            $x['err'] = $querys[$j]['err'];
+            array_push($list,$x);
+        }
+        return array('data'=>$list,'msg'=>'图书推荐');
     }
 //    推荐
-    public function actionRecommd()
+    public function Recommd($eid,$uid,$num)
+//    public function actionRecommd()
     {
         $request = \Yii::$app->request;
 //        $eid = $request->post('eid');
 //        $uid = $request->post('uid');
 //        $num = $request->post('num');
-        $eid=4;
-        $uid=13;
-        $num=2;
+//        $eid=4;
+//        $uid=13;
+//        $num=2;
         $list = $this->UserANS($eid,$uid,$num)['data'];
         $rem = $this->Rem($list)['data'];
-//        推荐列表
+
+//        return array('data'=>$rem,'msg'=>"$$$");
+//        题目推荐列表
         $ReList = [];
+        //        书籍推荐
+        $BookList = $this->BookRem($rem)['data'];
         for($i=0;$i<count($rem);$i++)
         {
-            $mon = $this->MoHuSearch($rem[$i])['data'];
-            for($j=0;$j<count($mon);$j++)
+            $Item = $this->MoHuSearch($rem[$i])['data'];
+            for($j=0;$j<count($Item);$j++)
             {
-                array_push($ReList,$mon[$j]);
+                array_push($ReList,$Item[$j]);
             }
         }
-//        按照err指标排序
-        foreach ($ReList as $key=>$value)
+//        return array('data'=>[$ReList,$BookList],'msg'=>'推荐题目');
+//        去重
+        $re = [];
+        for($k=0;$k<count($ReList);$k++)
         {
-            $flag[]=$value['err'];
+            $flag = true;
+            for($h=0;$h<count($re);$h++)
+            {
+                if($ReList[$k]['id']==$re[$h]['id']&&$ReList[$k]['typeid']==$re[$h]['typeid'])
+                {
+                    $flag = false;
+                }
+                else{
+                    continue;
+                }
+            }
+            if($flag)
+            {
+                array_push($re,$ReList[$k]);
+            }
+        }
+        $bo = [];
+        for($k=0;$k<count($BookList);$k++)
+        {
+            $flag = true;
+            for($h=0;$h<count($bo);$h++)
+            {
+                if($BookList[$k]['bookid']==$bo[$h]['bookid']&&$BookList[$k]['item']==$bo[$h]['item'])
+                {
+                    $flag = false;
+                }
+                else{
+                    continue;
+                }
+            }
+            if($flag)
+            {
+                array_push($bo,$BookList[$k]);
+            }
+        }
+//        return array('data'=>[$re,$bo],'msg'=>'推荐题目');
+//        按照err指标排序
+        foreach ($re as $key=>$value)
+        {
+            $flage[]=$value['err'];
         }
 //        降序排列
-        array_multisort($flag,SORT_DESC,$ReList);
+//        array_multisort($re,SORT_DESC,$flage);
+        array_multisort($flage,SORT_DESC,$re);
 //        只取前五条数据推荐
-        $ReList = array_slice($ReList,0,5);
-        return array('data'=>$ReList,'msg'=>'推荐题目');
+        $re = array_slice($re,0,5);
+//        return array('data'=>[$rem,$re,$bo],'msg'=>'推荐题目');
+        foreach ($bo as $key=>$value)
+        {
+            $bFlag[] = $value['err'];
+        }
+        array_multisort($bFlag,SORT_DESC,$bo);
+        $bo = array_slice($bo,0,5);
+//        知识点推介
+        $rem = array_slice($rem,0,5);
+        return array('data'=>[$rem,$re,$bo],'msg'=>'推荐题目');
     }
-//  书籍推荐
-
 }
