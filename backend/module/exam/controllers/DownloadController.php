@@ -280,8 +280,8 @@ class DownloadController extends Controller
         $path=$filePath.$title.'.pdf';
         ob_clean();
         $pdf->Output($path,'F');
-        $url=explode('htdocs',$path);
-        $url='http://127.0.0.1'.$url[1];
+        $url=explode('ComputeThinking',$path);
+        $url='http://127.0.0.1/ComputeThinking'.$url[1];
         return array('data'=>[$url,$query['exname']],'msg'=>'试卷pdf下载');
     }
 }

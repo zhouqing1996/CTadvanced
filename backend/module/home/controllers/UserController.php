@@ -244,32 +244,37 @@ class UserController extends Controller
         $role = $request->post('addrole');
         $status = $request->post('addstatus');
         $no = $request->post('addno');
-        $userid = (new Query())
-            ->select('*')
-            ->from('user')
-            ->max('id');
-        $id = $userid +1;
         //如果用户名已存在判断该用户已经添加过了，不能添加
         $query = (new Query())
             ->select('*')
             ->from('user')
-            ->Where(['username'=> $username])
-            ->andWhere(['no'=>$no])
+//            ->Where(['username'=> $username])
+            ->Where(['no'=>$no])
             ->andWhere(['role'=>$role])
             ->one();
+//        return array("data"=>[$query],"msg"=>"该用户名已存在");
         if($query){
             return array("data"=>[$query],"msg"=>"该用户名已存在");
         }
-        $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,
-            'status'=>$status,'no'=>$no))->execute();
-        if($insertU)
-        {
-            return array("data"=>[$username,$id],"msg"=>"用户添加成功");
-        }
         else
         {
-            return array("data"=>[$username,$id],"msg"=>"用户添加失败");
+            $userid = (new Query())
+                ->select('*')
+                ->from('user')
+                ->max('id');
+            $id = $userid +1;
+            $insertU = \Yii::$app->db->createCommand()->insert('user',array('id'=>$id,'username'=>$username,'password'=>$passwordE,'role'=>$role,
+                'status'=>$status,'no'=>$no))->execute();
+            if($insertU)
+            {
+                return array("data"=>[$username,$id],"msg"=>"用户添加成功");
+            }
+            else
+            {
+                return array("data"=>[$username,$id],"msg"=>"用户添加失败");
+            }
         }
+
     }
     /*
      * 用户删除，删除分两种：暂时删除的和永久删除

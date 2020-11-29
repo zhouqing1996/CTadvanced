@@ -252,7 +252,7 @@ class ExamController extends Controller
             $update = \Yii::$app->db->createCommand()->insert('useranss',
                 array('id'=>$id,'userid'=>$uid,'exid'=>$eid,'grade'=>$n,'finishtime'=>$finishtime, 'status'=>1,'ctime'=>$ctime))->execute();
 
-            return array('data'=>[$update],"msg"=>$uid."作答".$eid."完成");
+            return array('data'=>$id,"msg"=>$uid."作答".$eid."完成");
         }
     }
 //    书籍对应的知识点查找
@@ -309,6 +309,10 @@ class ExamController extends Controller
                             {
                                 $errb = $bookRem[$k]['err']-1;
                             }
+                            else
+                            {
+                                $errb = 0;
+                            }
                             $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
                                 ['id'=>$bookRem[$k]['id']])->execute();
                         }
@@ -355,6 +359,10 @@ class ExamController extends Controller
                             {
                                 $errb = $bookRem[$k]['err']-1;
                             }
+                            else
+                            {
+                                $errb = 0;
+                            }
                             $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
                                 ['id'=>$bookRem[$k]['id']])->execute();
                         }
@@ -399,6 +407,10 @@ class ExamController extends Controller
                             if($bookRem[$k]['err']>0)
                             {
                                 $errb = $bookRem[$k]['err']-1;
+                            }
+                            else
+                            {
+                                $errb = 0;
                             }
                             $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
                                 ['id'=>$bookRem[$k]['id']])->execute();
@@ -450,6 +462,10 @@ class ExamController extends Controller
                             {
                                 $errb = $bookRem[$k]['err']-1;
                             }
+                            else
+                            {
+                                $errb = 0;
+                            }
                             $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
                                 ['id'=>$bookRem[$k]['id']])->execute();
                         }
@@ -495,6 +511,10 @@ class ExamController extends Controller
                             if($bookRem[$k]['err']>0)
                             {
                                 $errb = $bookRem[$k]['err']-1;
+                            }
+                            else
+                            {
+                                $errb = 0;
                             }
                             $update_book =  \Yii::$app->db->createCommand()->update('bookitem',['err'=>$errb],
                                 ['id'=>$bookRem[$k]['id']])->execute();
@@ -563,6 +583,7 @@ class ExamController extends Controller
             ->from('useranss')
             ->where(['userid'=>$uid])
             ->andWhere(['status'=>1])
+            ->orderBy(['finishtime'=>SORT_DESC])
             ->all();
         if($query)
         {
