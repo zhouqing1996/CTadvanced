@@ -578,10 +578,12 @@ class ExamController extends Controller
     {
         $request = \Yii::$app->request;
         $uid = $request->post('uid');
+        $eid = $request->post('eid');
         $query = (new Query())
             ->select('*')
             ->from('useranss')
             ->where(['userid'=>$uid])
+            ->andWhere(['exid'=>$eid])
             ->andWhere(['status'=>1])
             ->orderBy(['finishtime'=>SORT_DESC])
             ->all();
@@ -590,7 +592,7 @@ class ExamController extends Controller
             for($i=0;$i<count($query);$i++)
             {
                 $exname = $this->Examname($query[$i]['exid'])['exname'];
-                $auth = $this->Username($this->Examname($query[$i]['exid']))['username'];
+                $auth = $this->Username($this->Examname($query[$i]['exid'])['auth'])['username'];
                 $query[$i]['auth']=$auth;
                 $query[$i]['exname'] = $exname;
             }

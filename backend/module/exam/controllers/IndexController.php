@@ -55,6 +55,7 @@ class IndexController extends Controller
                 ->select('*')
                 ->from('exam')
                 ->where(['exstatus'=>1])
+                ->orderBy(['exid'=>SORT_DESC])
                 ->all();
             $list = [];
             for($i=0;$i<count($query);$i++)
@@ -74,6 +75,7 @@ class IndexController extends Controller
                 ->select('*')
                 ->from('exam')
                 ->where(['exstatus'=>0])
+                ->orderBy(['exid'=>SORT_DESC])
                 ->all();
             $list=[];
             for($i=0;$i<count($query);$i++)
@@ -92,6 +94,7 @@ class IndexController extends Controller
             $query = (new Query())
                 ->select('*')
                 ->from('exam')
+                ->orderBy(['exid'=>SORT_DESC])
                 ->all();
             $list = [];
             for($i=0;$i<count($query);$i++)
@@ -114,6 +117,7 @@ class IndexController extends Controller
                 ->where(['or',
                     ['like', 'exname', $name],
                     ['like', 'exid', $name],])
+                ->orderBy(['exid'=>SORT_DESC])
                 ->all();
             $list = [];
             for($i=0;$i<count($query);$i++)
@@ -145,6 +149,7 @@ class IndexController extends Controller
                     ->from('exam')
                     ->where(['exstatus'=>1])
                     ->andWhere(['auth'=>$queryt[$i]['tid']])
+                    ->orderBy(['exid'=>SORT_DESC])
                     ->all();
                 for($j=0;$j<count($query);$j++)
                 {
@@ -795,14 +800,64 @@ class IndexController extends Controller
         }
     }
     /*
-     * 修改试卷：添加或者删除试卷中的某一个题目
-     * 标志：flag
-     * 1:添加一个题目到某个试卷
-     * 2：从某试卷中删除一道题目
+     * 查看试卷的创建人
      */
-    public function actionChangeexam()
+    public function ExamInfo($eid)
     {
+        $query = (new Query())
+            ->select('*')
+            ->from('exam')
+            ->where(['exid'=>$eid])
+            ->one();
+        return array('data'=>$query,'msg'=>'试卷信息');
+    }
+    /*
+     * 个人作答情况查看：
+     * 参数：用户id :uid
+     */
+    public function actionUserresult()
+    {
+        $request = \Yii::$app->request;
+        $uid = $request->post('uid');
+//        $uid = 13;
+        $query = (new Query())
+            ->select('*')
+            ->from('useranss')
+            ->where(['userid'=>$uid])
+            ->all();
+        if($query)
+        {
+            $eid = array_merge(array_unique(array_column($query,'exid')));
+            $list = [];
+            for($i=0;$i<count($eid);$i++)
+            {
+                $query1 = (new Query())
+                    ->select('*')
+                    ->from('useranss')
+                    ->where(['userid'=>$uid])
+                    ->andWhere(['exid'=>$eid[$i]])
+                    ->all();
 
+                $list[$i]['exid'] = $eid[$i];
+                //                作答次数
+                $list[$i]['num'] = count($query1);
+                //                最高分
+                $list[$i]['score'] = max(array_column($query1,'grade'));
+                //                最后完成时间
+                $list[$i]['lastTime'] = max(array_column($query1,'finishtime'));
+                $li = $this->ExamInfo($eid)['data'];
+                $list[$i]['exname'] = $li['exname'];
+                $list[$i]['createtime'] = $li['createtime'];
+                $list[$i]['auth'] = $this->UserName($li['auth'])['username'];
+                $list[$i]['gdtime'] = $li['gdtime'];
+
+            }
+            return array('data'=>$list,'msg'=>'用户作答情况');
+        }
+        else
+        {
+            return array('data'=>$uid,'msg'=>'该用户暂无作答情况');
+        }
     }
 
 }

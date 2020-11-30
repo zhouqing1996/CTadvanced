@@ -71,7 +71,6 @@ class StudentController extends Controller
         {
             return array('data'=>$query,'msg'=>'学生导师信息为空！');
         }
-
     }
 
 //    学生某一张试卷的数据分析：雷达图数据
@@ -150,5 +149,19 @@ class StudentController extends Controller
             }
         }
         return array('data'=>[$list,$listu,$query,$queryu],'msg'=>'雷达图数据');
+    }
+    /*
+     * 退选导师
+     */
+    public function actionExitteacher()
+    {
+        $request = \Yii::$app->request;
+        $uid = $request->post('uid');
+        $tid = $request->post('tid');
+        $del = \Yii::$app->db->createCommand()->delete('student',['sid'=>$uid,'tid'=>$tid])->execute();
+        if($del)
+        {
+            return array('data'=>$del,'msg'=>'成功退选导师');
+        }
     }
 }

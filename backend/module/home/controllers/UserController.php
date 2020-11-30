@@ -510,4 +510,45 @@ class UserController extends Controller
             return array('data'=>$query,'msg'=>"学生列表");
         }
     }
+    /*
+     * 学生选择导师，需要是用户未选择的导师
+     * 参数：uid
+     */
+    public function actionTeacherlist()
+    {
+        $request = \Yii::$app->request;
+        $uid = $request->post('uid');
+        $query = (new Query())
+            ->select('*')
+            ->from('student')
+            ->where(['sid'=>$uid])
+            ->all();
+        $tList = array_column($query,'tid');
+        $queryTList = (new Query())
+            ->select('*')
+            ->from('user')
+            ->where(['role'=>2])
+            ->orWhere(['role'=>1])
+            ->andWhere(['status'=>1])
+            ->all();
+        $allTList = array_column($queryTList,'id');
+        $List = array_merge(array_diff($allTList,$tList));
+//        return array('data'=>$List,'msg'=>'选择导师');
+        $seList = [];
+        for($i=0;$i<count($List);$i++)
+        {
+            $q = (new Query())
+                ->select('*')
+                ->from('user')
+                ->where(['id'=>$List[$i]])
+                ->one();
+            $seList[$i]['id'] = $q['id'];
+            $seList[$i]['no'] = $q['no'];
+            $seList[$i]['username'] = $q['username'];
+            $seList[$i]['token'] = $q['token'];
+            $seList[$i]['role'] = $q['role'];
+            $seList[$i]['status'] = $q['status'];
+        }
+        return array('data'=>$seList,'msg'=>'选择导师');
+    }
 }

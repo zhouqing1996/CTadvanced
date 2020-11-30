@@ -129,7 +129,15 @@ class DownloadController extends Controller
         }
         return array('data'=>[$query,$list],'msg'=>'试卷的全部内容');
     }
-
+//用户得到用户名
+    public function GetUserName($id)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('user')
+            ->where(['id'=>$id])
+            ->one();
+    }
 //    试卷下载
 //参数：试卷信息数据
     public function actionDfile()
@@ -167,7 +175,7 @@ class DownloadController extends Controller
         $pdf->AddPage();
         // //问卷标题
         $pdf->Write(0, $query['exname'], '', 0, 'C', 1, 0, false, false, 0);
-        $pdf->Write(0, $query['gdtime'].'分钟', '', 0, 'R', 1, 0, false, false, 0);
+        $pdf->Write(0, $this->GetUserName($query['auth'])['username'].'  '.$query['createtime'].'    '.$query['gdtime'].'分钟', '', 0, 'R', 1, 0, false, false, 0);
         $pdf->Ln(10);
         foreach ($list as $key=>$value)
         {
