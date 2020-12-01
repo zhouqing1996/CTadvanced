@@ -24,13 +24,13 @@
   <component name="ChangeListManager">
     <list default="true" id="9e9d69d1-ca5a-4f0c-90a7-011e8930b17b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/1.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/files/1.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/3.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/files/3.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/3.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/4.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/5.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/6.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/DownloadController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/DownloadController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/home/controllers/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/home/controllers/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/student/controllers/StudentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/student/controllers/StudentController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -232,7 +232,8 @@
       <workItem from="1606352821245" duration="14150000" />
       <workItem from="1606382366541" duration="177000" />
       <workItem from="1606638767202" duration="5026000" />
-      <workItem from="1606697966852" duration="14156000" />
+      <workItem from="1606697966852" duration="14160000" />
+      <workItem from="1606784699710" duration="26626000" />
     </task>
     <servers />
   </component>
@@ -252,6 +253,10 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="503" y="221" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606818163357">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="503" y="221" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1600.860@0.0.1600.860" timestamp="1606818163357" />
     <state x="146" y="109" key="#com.intellij.ide.util.MemberChooser" timestamp="1601341579174">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
@@ -276,9 +281,9 @@
       <screen x="0" y="0" width="1600" height="860" />
     </state>
     <state x="322" y="118" key="SettingsEditor/0.0.1600.860@0.0.1600.860" timestamp="1601265992519" />
-    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1606309621402">
+    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1606818317965">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1600.860@0.0.1600.860" timestamp="1606309621402" />
+    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1600.860@0.0.1600.860" timestamp="1606818317965" />
   </component>
 </project>

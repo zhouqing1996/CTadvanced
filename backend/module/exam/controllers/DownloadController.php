@@ -280,7 +280,7 @@ class DownloadController extends Controller
 
         $title = $query['exid'];
         $path = \Yii::$app->basePath;
-        $filePath = $path.'/files/';
+        $filePath = $path.'/files/download/';
         if(!is_dir($filePath))
         {
             mkdir(iconv('utf-8','GBK',$filePath),0777,true);
