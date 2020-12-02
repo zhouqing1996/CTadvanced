@@ -23,14 +23,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e9d69d1-ca5a-4f0c-90a7-011e8930b17b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/module/home/controllers/ExportController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/advanced.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/advanced.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/1.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/3.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/4.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/5.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/6.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/DownloadController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/DownloadController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/teacher/controllers/TeacherController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/InstalledVersions.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/InstalledVersions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_files.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_files.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/installed.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/installed.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,6 +144,14 @@
       <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
       <path value="$PROJECT_DIR$/vendor/codeception/module-yii2" />
       <path value="$PROJECT_DIR$/vendor/tecnickcom/tcpdf" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/vendor/maennchen/zipstream-php" />
+      <path value="$PROJECT_DIR$/vendor/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/php-enum" />
+      <path value="$PROJECT_DIR$/vendor/markbaker/complex" />
+      <path value="$PROJECT_DIR$/vendor/markbaker/matrix" />
     </include_path>
   </component>
   <component name="ProjectId" id="1i7gEpWzhQbl0E8KmKwA9ZB1Ble" />
@@ -233,7 +245,8 @@
       <workItem from="1606382366541" duration="177000" />
       <workItem from="1606638767202" duration="5026000" />
       <workItem from="1606697966852" duration="14160000" />
-      <workItem from="1606784699710" duration="26626000" />
+      <workItem from="1606784699710" duration="27227000" />
+      <workItem from="1606872121983" duration="10469000" />
     </task>
     <servers />
   </component>
@@ -253,10 +266,10 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="503" y="221" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606818163357">
+    <state x="503" y="221" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606875142146">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="503" y="221" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1600.860@0.0.1600.860" timestamp="1606818163357" />
+    <state x="503" y="221" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1600.860@0.0.1600.860" timestamp="1606875142146" />
     <state x="146" y="109" key="#com.intellij.ide.util.MemberChooser" timestamp="1601341579174">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
@@ -273,17 +286,17 @@
       <screen x="0" y="0" width="1600" height="860" />
     </state>
     <state x="601" y="241" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1606382546170" />
-    <state x="910" y="352" key="NewPhpFileDialog" timestamp="1605254113486">
+    <state x="910" y="352" key="NewPhpFileDialog" timestamp="1606872684258">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="910" y="352" key="NewPhpFileDialog/0.0.1600.860@0.0.1600.860" timestamp="1605254113486" />
+    <state x="910" y="352" key="NewPhpFileDialog/0.0.1600.860@0.0.1600.860" timestamp="1606872684258" />
     <state x="322" y="118" key="SettingsEditor" timestamp="1601265992519">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
     <state x="322" y="118" key="SettingsEditor/0.0.1600.860@0.0.1600.860" timestamp="1601265992519" />
-    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1606818317965">
+    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1606875931883">
       <screen x="0" y="0" width="1600" height="860" />
     </state>
-    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1600.860@0.0.1600.860" timestamp="1606818317965" />
+    <state x="298" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1600.860@0.0.1600.860" timestamp="1606875931883" />
   </component>
 </project>
