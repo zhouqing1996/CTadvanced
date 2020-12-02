@@ -106,7 +106,7 @@ class BookController extends Controller
             return array("data"=>[$query],"msg"=>"该图书已经添加过了");
         }
         $insertU = \Yii::$app->db->createCommand()->insert('book',array('bookid'=>$bookid,'bookname'=>$bookname,'publish'=>$publish,'author'=>$author,
-            'about'=>$about,'status'=>1,'userid'=>$auth,'err'=>0))->execute();
+            'about'=>$about,'status'=>1,'userid'=>$auth))->execute();
         if($insertU)
         {
             return array("data"=>[$bookname,$bookid],"msg"=>"图书添加成功");
@@ -138,7 +138,9 @@ class BookController extends Controller
                 ->one();
             if($query)
             {
-                $updateU = \Yii::$app->db->createCommand()->update('book', ['status' => 0,'userid'=>$auth], 'bookid=:bookid',[':bookid'=>$bookid])->execute();
+                $updateU = \Yii::$app->db->createCommand()->update('book',
+                    ['status' => 0,'userid'=>$auth], ['bookid'=>$bookid])->execute();
+                $updateU1 = \Yii::$app->db->createCommand()->update('bookitem',['bstatus'=>0],['bookid'=>$bookid])->execute();
                 if($updateU)
                 {
                     return array("data"=>[$query,$updateU],"msg"=>"该图书已删除");
@@ -162,6 +164,7 @@ class BookController extends Controller
             if($querys)
             {
                 $updateUs = \Yii::$app->db->createCommand()->delete('book',['bookid'=>$bookid])->execute();
+                $updateUs1 = \Yii::$app->db->createCommand()->delete('bookitem',['bookid'=>$bookid])->execute();
                 if($updateUs)
                 {
                     return array("data"=>[$querys,$updateUs],"msg"=>"该图书已永久删除");
@@ -232,7 +235,8 @@ class BookController extends Controller
                     return array("data" => [$query, $updateU], "msg" => "该图书关于已经修改");
                 }
             } else if ($flag == 5) {
-                $updateU = \Yii::$app->db->createCommand()->update('book', ['status' => 1,'userid'=>$auth], "bookid={$bookid}")->execute();
+                $updateU = \Yii::$app->db->createCommand()->update('book', ['status' => 1,'userid'=>$auth], ['bookid'=>$bookid])->execute();
+                $updateU1 = \Yii::$app->db->createCommand()->update('bookitem',['bstatus'=>1],['bookid'=>$bookid])->execute();
                 if ($updateU) {
                     return array("data" => [$query, $updateU], "msg" => "该图书状态修改成功");
                 } else {
@@ -276,5 +280,86 @@ class BookController extends Controller
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");
+    }
+    /*
+         * 书籍信息
+         */
+    public function Book($id)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('book')
+            ->where(['bookid'=>$id])
+            ->one();
+    }
+    /*
+     * 书籍的详细信息
+     * 参数：书id
+     */
+    public function actionBookitem()
+    {
+        $request = \Yii::$app->request;
+        $bid = $request->post('bid');
+        $query = (new Query())
+            ->select('*')
+            ->from('bookitem')
+            ->where(['bookid'=>$bid])
+            ->all();
+        $book = $this->Book($bid);
+        return array('data'=>[$book,$query],'msg'=>'书籍的详细信息');
+    }
+    /*
+     * 删除书籍的某一个章节
+     * 参数：书籍id,章节id
+     * 1:删除
+     * 2：彻底删除
+     * 3：恢复
+     */
+    public function actionDelitem()
+    {
+        $request = \Yii::$app->request;
+        $bid = $request->post('bid');
+        $mid = $request->post('mid');
+        $flag = $request->post('flag');
+        if($flag==1)
+        {
+            $del = \Yii::$app->db->createCommand()->update('bookitem', ['bstatus'=>0],['bookid'=>$bid,'id'=>$mid])->execute();
+        }
+        else if($flag==2)
+        {
+            $del = \Yii::$app->db->createCommand()->delete('bookitem', ['bookid'=>$bid,'id'=>$mid])->execute();
+        }
+        else if($flag==3)
+        {
+            $del = \Yii::$app->db->createCommand()->update('bookitem', ['bstatus'=>1],['bookid'=>$bid,'id'=>$mid])->execute();
+        }
+        return array('data'=>$del,'msg'=>'更新数据');
+    }
+
+    /*
+     * 章节序号
+     */
+    public function BookID($id)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('bookitem')
+            ->where(['bookid'=>$id])
+            ->max('id')+1;
+    }
+    /*
+     * 添加章节
+     * 参数：书籍id.、添加信息
+     */
+    public function actionAdditem()
+    {
+        $request = \Yii::$app->request;
+        $bid =$request->post('bid');
+        $list = $request->post('list');
+        $book = $this->Book($bid);
+        $add = \Yii::$app->db->createCommand()->insert('bookitem',
+            array('id'=>$this->BookID($bid),'bookid'=>$bid,'bookname'=>$book['bookname'],'bookitem'=>$list['item'],
+                'bookrem'=>$list['rem'],'err'=>0,'bstatus'=>1))->execute();
+        return array('data'=>$list,'msg'=>'添加章节');
     }
 }

@@ -169,7 +169,116 @@ class ExportController extends Controller
             ->where(['id'=>$id])
             ->one();
     }
-
+    /*
+     * 题型输出
+     */
+    public function Bank($id,$type)
+    {
+        switch ($type)
+        {
+            case 1:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('chooseq')
+                    ->where(['cqid'=>$id])
+                    ->one();
+                $list['id'] = $query['cqid'];
+                $list['item'] = $query['cqitem'];
+                return array('data'=>['单选题',$list],'msg'=>'单选题信息');
+            case 2:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('fillq')
+                    ->where(['fqid'=>$id])
+                    ->one();
+                $list['id'] = $query['fqid'];
+                $list['item'] = $query['fqitem'];
+                return array('data'=>['填空题',$list],'msg'=>'填空题信息');
+            case 3:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('program')
+                    ->where(['pqid'=>$id])
+                    ->one();
+                $list['id'] = $query['pqid'];
+                $list['item'] = $query['pqitem'];
+                return array('data'=>['程序题',$list],'msg'=>'程序题信息');
+            case 4:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('choosem')
+                    ->where(['mqid'=>$id])
+                    ->one();
+                $list['id'] = $query['mqid'];
+                $list['item'] = $query['mqitem'];
+                return array('data'=>['多选题',$list],'msg'=>'多选题信息');
+            case 5:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('judge')
+                    ->where(['jqid'=>$id])
+                    ->one();
+                $list['id'] = $query['jqid'];
+                $list['item'] = $query['jqitem'];
+                return array('data'=>['判断题',$list],'msg'=>'判断题信息');
+            default:
+                $list['id'] = '';
+                $list['item'] = '';
+                return array('data'=>['未知',$list],'msg'=>'未知');
+        }
+    }
+    /*
+     * 回答正误判断
+     */
+    public function Flag($flag)
+    {
+        switch ($flag)
+        {
+            case 0:
+                return '错误';
+            case 1:
+                return '正确';
+            default:
+                return '未知';
+        }
+    }
+    /*
+     * 判断题答案
+     */
+    public function Judge($judge)
+    {
+        switch ($judge)
+        {
+            case 1:
+                return '正确';
+            case 0:
+                return '错误';
+            default:
+                return '未知';
+        }
+    }
+    /*
+     * 试卷名称
+     */
+    public function Exam($id)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('exam')
+            ->where(['exid'=>$id])
+            ->one();
+    }
+    /*
+     * 书籍信息
+     */
+    public function Book($id)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('book')
+            ->where(['bookid'=>$id])
+            ->one();
+    }
     /*
      * 导出选择题
      * 将选项分割
@@ -442,21 +551,7 @@ class ExportController extends Controller
         ob_end_flush();
         return array('data'=>$url,'msg'=>'多选题导出');
     }
-    /*
-     * 判断题答案
-     */
-    public function Judge($judge)
-    {
-        switch ($judge)
-        {
-            case 1:
-                return '正确';
-            case 0:
-                return '错误';
-            default:
-                return '未知';
-        }
-    }
+
     /*
      * 判断题导出
      */
@@ -649,17 +744,7 @@ class ExportController extends Controller
         ob_end_flush();
         return array('data'=>$url,'msg'=>'试卷信息');
     }
-    /*
-     * 试卷名称
-     */
-    public function Exam($id)
-    {
-        return (new Query())
-            ->select('*')
-            ->from('exam')
-            ->where(['exid'=>$id])
-            ->one();
-    }
+
     /*
      * 导出某试卷中的作答信息
      * 参数：试卷编号
@@ -688,7 +773,9 @@ class ExportController extends Controller
             $list[$i]['finishtime'] = $query[$i]['finishtime'];
             $list[$i]['status'] = $this->StatusName($query[$i]['status']);
         }
-        $fileName = '作答信息';
+        $exname = $this->Exam($eid)['exname'];
+        $exname = str_replace('/','_',$exname);
+        $fileName = $exname.'的作答信息';
         //表头
         $title = ['作答次数','作答学生','试卷名称','得分','作答用时','完成时间','状态'];
         set_time_limit(0);
@@ -732,79 +819,7 @@ class ExportController extends Controller
         ob_end_flush();
         return array('data'=>$url,'msg'=>'作答信息');
     }
-    /*
-     * 题型输出
-     */
-    public function Bank($id,$type)
-    {
-        switch ($type)
-        {
-            case 1:
-                $query = (new Query())
-                    ->select('*')
-                    ->from('chooseq')
-                    ->where(['cqid'=>$id])
-                    ->one();
-                $list['id'] = $query['cqid'];
-                $list['item'] = $query['cqitem'];
-                return array('data'=>['单选题',$list],'msg'=>'单选题信息');
-            case 2:
-                $query = (new Query())
-                    ->select('*')
-                    ->from('fillq')
-                    ->where(['fqid'=>$id])
-                    ->one();
-                $list['id'] = $query['fqid'];
-                $list['item'] = $query['fqitem'];
-                return array('data'=>['填空题',$list],'msg'=>'填空题信息');
-            case 3:
-                $query = (new Query())
-                    ->select('*')
-                    ->from('program')
-                    ->where(['pqid'=>$id])
-                    ->one();
-                $list['id'] = $query['pqid'];
-                $list['item'] = $query['pqitem'];
-                return array('data'=>['程序题',$list],'msg'=>'程序题信息');
-            case 4:
-                $query = (new Query())
-                    ->select('*')
-                    ->from('choosem')
-                    ->where(['mqid'=>$id])
-                    ->one();
-                $list['id'] = $query['mqid'];
-                $list['item'] = $query['mqitem'];
-                return array('data'=>['多选题',$list],'msg'=>'多选题信息');
-            case 5:
-                $query = (new Query())
-                    ->select('*')
-                    ->from('judge')
-                    ->where(['jqid'=>$id])
-                    ->one();
-                $list['id'] = $query['jqid'];
-                $list['item'] = $query['jqitem'];
-                return array('data'=>['判断题',$list],'msg'=>'判断题信息');
-            default:
-                $list['id'] = '';
-                $list['item'] = '';
-                return array('data'=>['未知',$list],'msg'=>'未知');
-        }
-    }
-    /*
-     * 回答正误判断
-     */
-    public function Flag($flag)
-    {
-        switch ($flag)
-        {
-            case 0:
-                return '错误';
-            case 1:
-                return '正确';
-            default:
-                return '未知';
-        }
-    }
+
     /*
      * 导出某一个人的详细作答信息
      * 参数：试卷id,用户id
@@ -899,6 +914,345 @@ class ExportController extends Controller
      */
     public function actionTeacherstu()
     {
-
+        $request = \Yii::$app->request;
+        $tid = $request->post('tid');
+        $query = (new Query())
+            ->select('*')
+            ->from('student')
+            ->where(['tid'=>$tid])
+            ->all();
+        $list = [];
+        for($i=0;$i<count($query);$i++)
+        {
+            $list[$i]['num'] = $i+1;
+            $stu = $this->User($query[$i]['sid']);
+            $list[$i]['no'] = $stu['no'];
+            $list[$i]['username'] = $stu['username'];
+            $list[$i]['status'] = $this->StatusName($stu['status']);
+        }
+        $tname = $this->User($tid)['username'];
+        $fileName = $tname.'的学生列表';
+        //表头
+        $title = ['序号','学生学号','学生姓名','状态'];
+        set_time_limit(0);
+        $spreadsheet = new Spreadsheet();
+        $worksheet = $spreadsheet->getActiveSheet();
+        //设置表标题
+        $worksheet->setTitle('学生列表');
+        //表头
+        foreach ($title as $key =>$value) {
+            $worksheet->setCellValueByColumnAndRow($key+1,1,$value);
+        }
+        //从第二行开始插入数据
+        $row =2;
+        foreach ($list as $item)
+        {
+            $column = 1;
+            foreach ($item as $value)
+            {
+                $worksheet->setCellValueByColumnAndRow($column,$row,$value);
+                $column++;
+            }
+            $row++;
+        }
+        ob_clean();
+        ob_start();
+        $writer = IOFactory::createWriter($spreadsheet,'Xlsx');
+        $this->excelBrowserExport($fileName,'Xlsx');
+        $path = \Yii::$app->basePath;
+        $xlsxPath = $path.'/files/xlsx/';
+        if(!is_dir($xlsxPath))
+        {
+            mkdir(iconv('utf-8','GBK',$xlsxPath),0777,true);
+        }
+        $path=$xlsxPath.$fileName.'.xlsx';
+        ob_clean();
+        $url=explode('ComputeThinking',$path);
+        $url='http://127.0.0.1/ComputeThinking'.$url[1];
+        $writer->save($path);
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        ob_end_flush();
+        return array('data'=>$url,'msg'=>$fileName);
+    }
+    /*
+     * 教师资源列表导出
+     * 参数：教师id
+     */
+    public function actionTeacherreco()
+    {
+        $request = \Yii::$app->request;
+        $tid = $request->post('tid');
+        $query = (new Query())
+            ->select('*')
+            ->from('teacher')
+            ->where(['tid'=>$tid])
+            ->all();
+        $list = [];
+        for($i=0;$i<count($query);$i++)
+        {
+            $list[$i]['num'] = $i+1;
+            $list[$i]['dir'] = $query[$i]['dir'];
+            $list[$i]['name'] = $query[$i]['name'];
+            $list[$i]['status'] = $this->StatusName($query[$i]['status']);
+        }
+        $tname = $this->User($tid)['username'];
+        $fileName = $tname.'的资源列表';
+        //表头
+        $title = ['序号','资源路径','资源名称','状态'];
+        set_time_limit(0);
+        $spreadsheet = new Spreadsheet();
+        $worksheet = $spreadsheet->getActiveSheet();
+        //设置表标题
+        $worksheet->setTitle('学生列表');
+        //表头
+        foreach ($title as $key =>$value) {
+            $worksheet->setCellValueByColumnAndRow($key+1,1,$value);
+        }
+        //从第二行开始插入数据
+        $row =2;
+        foreach ($list as $item)
+        {
+            $column = 1;
+            foreach ($item as $value)
+            {
+                $worksheet->setCellValueByColumnAndRow($column,$row,$value);
+                $column++;
+            }
+            $row++;
+        }
+        ob_clean();
+        ob_start();
+        $writer = IOFactory::createWriter($spreadsheet,'Xlsx');
+        $this->excelBrowserExport($fileName,'Xlsx');
+        $path = \Yii::$app->basePath;
+        $xlsxPath = $path.'/files/xlsx/';
+        if(!is_dir($xlsxPath))
+        {
+            mkdir(iconv('utf-8','GBK',$xlsxPath),0777,true);
+        }
+        $path=$xlsxPath.$fileName.'.xlsx';
+        ob_clean();
+        $url=explode('ComputeThinking',$path);
+        $url='http://127.0.0.1/ComputeThinking'.$url[1];
+        $writer->save($path);
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        ob_end_flush();
+        return array('data'=>$url,'msg'=>$fileName);
+    }
+    /*
+     * 教师导出自己创建的试卷
+     * 参数:教师id
+     */
+    public function actionTeacherexaminfo()
+    {
+        $request = \Yii::$app->request;
+        $tid = $request->post('tid');
+        $query = (new Query())
+            ->select('*')
+            ->from('exam')
+            ->where(['auth'=>$tid])
+            ->all();
+        $list = [];
+        for($i=0;$i<count($query);$i++)
+        {
+            $list[$i]['exid'] = $query[$i]['exid'];
+            $list[$i]['exname'] = $query[$i]['exname'];
+            $list[$i]['createtime'] = $query[$i]['createtime'];
+            $list[$i]['auth'] = $this->User($query[$i]['auth'])['username'];
+            $list[$i]['gdtime'] = $query[$i]['gdtime'].'分钟';
+            $list[$i]['exstatus'] = $this->StatusName($query[$i]['exstatus']);
+        }
+        $tname = $this->User($tid)['username'];
+        $fileName = $tname.'的试卷信息';
+        //表头
+        $title = ['试卷序号','试卷名称','创建时间','创建作者','规定时间','状态'];
+        set_time_limit(0);
+        $spreadsheet = new Spreadsheet();
+        $worksheet = $spreadsheet->getActiveSheet();
+        //设置表标题
+        $worksheet->setTitle('试卷信息');
+        //表头
+        foreach ($title as $key =>$value) {
+            $worksheet->setCellValueByColumnAndRow($key+1,1,$value);
+        }
+        //从第二行开始插入数据
+        $row =2;
+        foreach ($list as $item)
+        {
+            $column = 1;
+            foreach ($item as $value)
+            {
+                $worksheet->setCellValueByColumnAndRow($column,$row,$value);
+                $column++;
+            }
+            $row++;
+        }
+        ob_clean();
+        ob_start();
+        $writer = IOFactory::createWriter($spreadsheet,'Xlsx');
+        $this->excelBrowserExport($fileName,'Xlsx');
+        $path = \Yii::$app->basePath;
+        $xlsxPath = $path.'/files/xlsx/';
+        if(!is_dir($xlsxPath))
+        {
+            mkdir(iconv('utf-8','GBK',$xlsxPath),0777,true);
+        }
+        $path=$xlsxPath.$fileName.'.xlsx';
+        ob_clean();
+        $url=explode('ComputeThinking',$path);
+        $url='http://127.0.0.1/ComputeThinking'.$url[1];
+        $writer->save($path);
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        ob_end_flush();
+        return array('data'=>$url,'msg'=>$fileName);
+    }
+    /*
+     * 导出学生的练习情况（管理员）
+     */
+    public function actionStudentpra()
+    {
+        $query = (new Query())
+            ->select('*')
+            ->from('pratice')
+            ->all();
+        $list = [];
+        for($i=0;$i<count($query);$i++)
+        {
+            $list[$i]['id'] = '第'.$query[$i]['id'].'次';
+            $stu = $this->User($query[$i]['userid']);
+            $list[$i]['no'] = $stu['no'];
+            $list[$i]['username'] = $stu['username'];
+            $ex =$this->Bank($query[$i]['qid'],$query[$i]['qtypeid'])['data'];
+            $list[$i]['type'] = $ex[0];
+            $list[$i]['item'] = $ex[1]['item'];
+            if($query[$i]['qtypeid']==5)
+            {
+                $list[$i]['ans'] = $this->Judge($query[$i]['ans']);
+            }
+            else
+            {
+                $list[$i]['ans'] = $query[$i]['ans'];
+            }
+            $list[$i]['grade'] =$this->Flag($query[$i]['grade']);
+            $ctime = $query[$i]['ctime'];
+            $ctime = explode(':',$ctime);
+            $ctime = $ctime[0]*60+$ctime[1]+$ctime[2]/60;
+            $list[$i]['ctime'] =round($ctime,2).'分钟';
+            $list[$i]['finishtime'] = $query[$i]['finishtime'];
+            $list[$i]['status'] = $this->StatusName($query[$i]['status']);
+        }
+        $fileName = '学生练习数据';
+        //表头
+        $title = ['作答次数','学生学号','学生姓名','题目题干','题目类型','作答答案','判题正误','作答时间','完成时间','状态'];
+        set_time_limit(0);
+        $spreadsheet = new Spreadsheet();
+        $worksheet = $spreadsheet->getActiveSheet();
+        //设置表标题
+        $worksheet->setTitle('学生练习数据');
+        //表头
+        foreach ($title as $key =>$value) {
+            $worksheet->setCellValueByColumnAndRow($key+1,1,$value);
+        }
+        //从第二行开始插入数据
+        $row =2;
+        foreach ($list as $item)
+        {
+            $column = 1;
+            foreach ($item as $value)
+            {
+                $worksheet->setCellValueByColumnAndRow($column,$row,$value);
+                $column++;
+            }
+            $row++;
+        }
+        ob_clean();
+        ob_start();
+        $writer = IOFactory::createWriter($spreadsheet,'Xlsx');
+        $this->excelBrowserExport($fileName,'Xlsx');
+        $path = \Yii::$app->basePath;
+        $xlsxPath = $path.'/files/xlsx/';
+        if(!is_dir($xlsxPath))
+        {
+            mkdir(iconv('utf-8','GBK',$xlsxPath),0777,true);
+        }
+        $path=$xlsxPath.$fileName.'.xlsx';
+        ob_clean();
+        $url=explode('ComputeThinking',$path);
+        $url='http://127.0.0.1/ComputeThinking'.$url[1];
+        $writer->save($path);
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        ob_end_flush();
+        return array('data'=>$url,'msg'=>$fileName);
+    }
+    /*
+     * 导出一本书的信息
+     * 参数：书籍id
+     */
+    public function actionBookitem()
+    {
+        $request = \Yii::$app->request;
+        $bid = $request->post('bid');
+        $query = (new Query())
+            ->select('*')
+            ->from('bookitem')
+            ->where(['bookid'=>$bid])
+            ->all();
+        $list = [];
+        for($i=0;$i<count($query);$i++)
+        {
+            $list[$i]['id'] = $query[$i]['id'];
+            $list[$i]['bookitem'] = $query[$i]['bookitem'];
+            $list[$i]['bookrem'] = $query[$i]['bookrem'];
+            $list[$i]['err'] = $query[$i]['err'];
+            $list[$i]['status'] = $this->StatusName($query[$i]['bstatus']);
+        }
+        $bookname = $this->Book($bid)['bookname'];
+        $fileName = $bookname.'详细信息';
+        //表头
+        $title = ['序号','章节','知识点','权重','状态'];
+        set_time_limit(0);
+        $spreadsheet = new Spreadsheet();
+        $worksheet = $spreadsheet->getActiveSheet();
+        //设置表标题
+        $worksheet->setTitle('书籍详细信息');
+        //表头
+        foreach ($title as $key =>$value) {
+            $worksheet->setCellValueByColumnAndRow($key+1,1,$value);
+        }
+        //从第二行开始插入数据
+        $row =2;
+        foreach ($list as $item)
+        {
+            $column = 1;
+            foreach ($item as $value)
+            {
+                $worksheet->setCellValueByColumnAndRow($column,$row,$value);
+                $column++;
+            }
+            $row++;
+        }
+        ob_clean();
+        ob_start();
+        $writer = IOFactory::createWriter($spreadsheet,'Xlsx');
+        $this->excelBrowserExport($fileName,'Xlsx');
+        $path = \Yii::$app->basePath;
+        $xlsxPath = $path.'/files/xlsx/';
+        if(!is_dir($xlsxPath))
+        {
+            mkdir(iconv('utf-8','GBK',$xlsxPath),0777,true);
+        }
+        $path=$xlsxPath.$fileName.'.xlsx';
+        ob_clean();
+        $url=explode('ComputeThinking',$path);
+        $url='http://127.0.0.1/ComputeThinking'.$url[1];
+        $writer->save($path);
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        ob_end_flush();
+        return array('data'=>$url,'msg'=>$fileName);
     }
 }

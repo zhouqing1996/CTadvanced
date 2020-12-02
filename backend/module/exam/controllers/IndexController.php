@@ -564,7 +564,7 @@ class IndexController extends Controller
                     $idc = $idc+1;
                     $updatec = \Yii::$app->db->createCommand()->insert('chooseq',
                         array('cqid'=>$idc,'cqitem'=>$Clist[$i]['cqitem'],'cqcho'=>$op,'cqans'=>$Clist[$i]['cqans'],'cqtail'=>$Clist[$i]['cqtail'],
-                            'cqrem'=>$Clist[$i]['cqrem'],'cqstatus'=>1,'userid'=>$auth))->execute();
+                            'cqrem'=>$Clist[$i]['cqrem'],'cqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
                     $insertc = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
                         'qid' => $idc, 'qtypeid' => 1, 'exstatus' => 1,'id'=>$xc))->execute();
                 }
@@ -593,7 +593,7 @@ class IndexController extends Controller
                     $idf = $idf + 1;
                     $updatef = \Yii::$app->db->createCommand()->insert('fillq',
                         array('fqid' => $idf, 'fqitem' => $Flist[$i]['fitem'], 'fqans' => $Flist[$i]['fans'], 'fqtail' => $Flist[$i]['ftail'],
-                            'fqrem' => $Flist[$i]['frem'], 'fqstatus' => 1,'userid'=>$auth))->execute();
+                            'fqrem' => $Flist[$i]['frem'], 'fqstatus' => 1,'userid'=>$auth,'err'=>0))->execute();
                     $insertf = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
                         'qid' => $idf, 'qtypeid' => 2, 'exstatus' => 1,'id'=>$xf))->execute();
                 }
@@ -623,7 +623,7 @@ class IndexController extends Controller
                     $idj = $idj + 1;
                     $updatej = \Yii::$app->db->createCommand()->insert('judge',
                         array('jqid' => $idj, 'jqitem' => $Jlist[$i]['jitem'], 'jqans' => $Jlist[$i]['jans'], 'jqtail' => $Jlist[$i]['jtail'],
-                            'jqrem' => $Jlist[$i]['jrem'], 'jqstatus' => 1,'userid'=>$auth))->execute();
+                            'jqrem' => $Jlist[$i]['jrem'], 'jqstatus' => 1,'userid'=>$auth,'err'=>0))->execute();
                     $insertj = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
                         'qid' => $idj, 'qtypeid' => 5, 'exstatus' => 1,'id'=>$xj))->execute();
                 }
@@ -653,7 +653,7 @@ class IndexController extends Controller
                     $idp = $idp + 1;
                     $updatep = \Yii::$app->db->createCommand()->insert('program',
                         array('pqid' => $idp, 'pqitem' => $Plist[$i]['pitem'], 'pqans' => $Plist[$i]['pans'], 'pqtail' => $Plist[$i]['ptail'],
-                            'pqrem' => $Plist[$i]['prem'], 'pqstatus' => 1,'userid'=>$auth))->execute();
+                            'pqrem' => $Plist[$i]['prem'], 'pqstatus' => 1,'userid'=>$auth,'err'=>0))->execute();
                     $insertp = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
                         'qid' => $idp, 'qtypeid' => 3, 'exstatus' => 1,'id'=>$xp))->execute();
                 }
@@ -685,7 +685,7 @@ class IndexController extends Controller
 
                     $updatecm = \Yii::$app->db->createCommand()->insert('choosem',
                         array('mqid'=>$idcm,'mqitem'=>$CMlist[$i]['mitem'],'mqcho'=>$op,'mqans'=>$CMlist[$i]['mans'],'mqtail'=>$CMlist[$i]['mtail'],
-                            'mqrem'=>$CMlist[$i]['mrem'],'mqstatus'=>1,'userid'=>$auth))->execute();
+                            'mqrem'=>$CMlist[$i]['mrem'],'mqstatus'=>1,'userid'=>$auth,'err'=>0))->execute();
                     $insertm = \Yii::$app->db->createCommand()->insert('examtail', array('exid' => $id,
                         'qid' => $idcm, 'qtypeid' => 4, 'exstatus' => 1,'id'=>$xcm))->execute();
                 }
