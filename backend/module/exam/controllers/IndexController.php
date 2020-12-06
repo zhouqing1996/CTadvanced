@@ -845,7 +845,7 @@ class IndexController extends Controller
                 $list[$i]['score'] = max(array_column($query1,'grade'));
                 //                最后完成时间
                 $list[$i]['lastTime'] = max(array_column($query1,'finishtime'));
-                $li = $this->ExamInfo($eid)['data'];
+                $li = $this->ExamInfo($eid[$i])['data'];
                 $list[$i]['exname'] = $li['exname'];
                 $list[$i]['createtime'] = $li['createtime'];
                 $list[$i]['auth'] = $this->UserName($li['auth'])['username'];

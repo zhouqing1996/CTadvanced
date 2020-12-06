@@ -247,13 +247,13 @@ class ExamController extends Controller
                     'ans'=>$jqans,'grade'=>'','finishtime'=>$finishtime, 'status'=>1,'ctime'=>$sctime))->execute();
         }
         $n = $this->Checkans($id,$uid,$eid);
-        if($n!=0)
-        {
+//        if($n!=0)
+//        {
             $update = \Yii::$app->db->createCommand()->insert('useranss',
                 array('id'=>$id,'userid'=>$uid,'exid'=>$eid,'grade'=>$n,'finishtime'=>$finishtime, 'status'=>1,'ctime'=>$ctime))->execute();
 
             return array('data'=>$id,"msg"=>$uid."作答".$eid."完成");
-        }
+//        }
     }
 //    书籍对应的知识点查找
     public function Book($name)
@@ -596,7 +596,8 @@ class ExamController extends Controller
                 $query[$i]['auth']=$auth;
                 $query[$i]['exname'] = $exname;
             }
-            return array('data'=>$query,'msg'=>'查找成功');
+            $exname = $this->Examname($eid)['exname'];
+            return array('data'=>[$exname,$query],'msg'=>'查找成功');
         }
         else{
             return array('data'=>[],'msg'=>'该用户没有作答');
