@@ -23,12 +23,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e9d69d1-ca5a-4f0c-90a7-011e8930b17b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/module/student/controllers/PracticeController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/module/teacher/controllers/PracticeController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/xlsx/周青详细作答2020_11_30测试数据.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/backend/files/xlsx/周青详细作答2020_11_30测试数据.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/ExamController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/exam/controllers/IndexController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/student/controllers/PracticeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/student/controllers/PracticeController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -243,7 +239,9 @@
       <workItem from="1606872121983" duration="19934000" />
       <workItem from="1606902185414" duration="1515000" />
       <workItem from="1607167037663" duration="4983000" />
-      <workItem from="1607223890407" duration="14659000" />
+      <workItem from="1607223890407" duration="15042000" />
+      <workItem from="1607340133311" duration="4279000" />
+      <workItem from="1607387637814" duration="10861000" />
     </task>
     <servers />
   </component>

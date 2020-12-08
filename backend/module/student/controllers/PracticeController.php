@@ -54,6 +54,22 @@ class PracticeController extends Controller
                 ->all();
             for($j=0;$j<count($queryt);$j++)
             {
+                //查看该练习该用户是否已作答
+                $ans = (new Query())
+                    ->select('*')
+                    ->from('pracuser')
+                    ->where(['uid'=>$queryt[$j]['auth']])
+                    ->andWhere(['pid'=>$queryt[$j]['id']])
+                    ->one();
+                if($ans)
+                {
+                    //已作答
+                    $list[$n]['flag'] = 1;
+                }
+                else
+                {
+                    $list[$n]['flag']=0;
+                }
                 $list[$n]['id'] = $queryt[$j]['id'];
                 $list[$n]['name'] = $queryt[$j]['name'];
                 $list[$n]['createtime'] = $queryt[$j]['createtime'];
@@ -71,6 +87,21 @@ class PracticeController extends Controller
             ->all();
         for($i=0;$i<count($queryU);$i++)
         {
+            //查看该练习该用户是否已作答
+            $ans = (new Query())
+                ->select('*')
+                ->from('pracuser')
+                ->where(['uid'=>$queryU[$i]['auth']])
+                ->andWhere(['pid'=>$queryU[$i]['id']])
+                ->one();
+            if($ans)
+            {
+                $list[$n]['flag'] = 1;
+            }
+            else
+            {
+                $list[$n]['flag']=0;
+            }
             $list[$n]['id'] = $queryU[$i]['id'];
             $list[$n]['name'] = $queryU[$i]['name'];
             $list[$n]['createtime'] = $queryU[$i]['createtime'];
@@ -148,7 +179,6 @@ class PracticeController extends Controller
             ->from("chooseq")
             ->max('cqid');
         $arrc = $this->Rand($min, $queryc, $nc);
-
         for ($x = 0; $x < $nc; ) {
             $err = (new Query())
                 ->select('*')
@@ -743,7 +773,7 @@ class PracticeController extends Controller
         $num = $request->post('num');
         $query =(new Query())
             ->select('*')
-            ->from('pracusertail')
+            ->from('practail')
             ->where(['pid'=>$pid])
             ->all();
         //       做数据的统计，分别设置不同题型，统计题型数据
@@ -1012,5 +1042,189 @@ class PracticeController extends Controller
         else{
             return array('data'=>[],'msg'=>'没有该试卷');
         }
+    }
+    /*
+     * 搜索练习
+     * 参数：name
+     * 用户id,学生
+     */
+    public function actionSearchp()
+    {
+        $request = \Yii::$app->request;
+        $name = $request->post('name');
+        $uid = $request->post('uid');
+        //数据列表
+        $list = [];
+        $n=0;
+
+        //找对应的教师
+        $queryTeacher = (new Query())
+            ->select('*')
+            ->from('student')
+            ->where(['sid'=>$uid])
+            ->andWhere(['status'=>1])
+            ->all();
+        $teacherlist = array_column($queryTeacher,'tid');
+        for($i=0;$i<count($teacherlist);$i++)
+        {
+            $queryt = (new Query())
+                ->select('*')
+                ->from('prac')
+                ->where(['auth'=>$teacherlist[$i]])
+                ->andWhere(['status'=>1])
+                ->andWhere(['or',
+                    ['like','name',$name],
+                    ['like','createtime',$name]])
+                ->orderBy(['createtime'=>SORT_DESC])
+                ->all();
+            for($j=0;$j<count($queryt);$j++)
+            {
+                $list[$n]['id'] = $queryt[$j]['id'];
+                $list[$n]['name'] = $queryt[$j]['name'];
+                $list[$n]['createtime'] = $queryt[$j]['createtime'];
+                $list[$n]['auth'] = $this->User($queryt[$j]['auth'])['username'];
+                $list[$n]['status'] = $queryt[$j]['status'];
+                $n++;
+            }
+        }
+        //个人创建的练习题
+        $queryU = (new Query())
+            ->select('*')
+            ->from('prac')
+            ->where(['auth'=>$uid])
+            ->andWhere(['or',
+                ['like','name',$name],
+                ['like','createtime',$name]])
+            ->orderBy(['createtime'=>SORT_DESC])
+            ->all();
+        for($i=0;$i<count($queryU);$i++)
+        {
+            $list[$n]['id'] = $queryU[$i]['id'];
+            $list[$n]['name'] = $queryU[$i]['name'];
+            $list[$n]['createtime'] = $queryU[$i]['createtime'];
+            $list[$n]['auth'] = $this->User($queryU[$i]['auth'])['username'];
+            $list[$n]['status'] = $queryU[$i]['status'];
+            $n++;
+        }
+        return array('data'=>$list,'msg'=>'练习题列表');
+    }
+    /*
+     * 查看试卷的创建人
+     */
+    public function ExamInfo($pid)
+    {
+        $query = (new Query())
+            ->select('*')
+            ->from('prac')
+            ->where(['id'=>$pid])
+            ->one();
+        return array('data'=>$query,'msg'=>'试卷信息');
+    }
+    /*
+     * 学生练习结果查看
+     * 参数：用户id
+     */
+    public function actionPracticeans()
+    {
+        $request =\Yii::$app->request;
+        $uid = $request->post('uid');
+        $query = (new Query())
+            ->select('*')
+            ->from('pracuser')
+            ->where(['uid'=>$uid])
+            ->andWhere(['status'=>1])
+            ->all();
+        $list = [];
+        if($query)
+        {
+            $pid = array_merge(array_unique(array_column($query,'pid')));
+            for($i=0;$i<count($pid);$i++)
+            {
+                $query1 = (new Query())
+                    ->select('*')
+                    ->from('pracuser')
+                    ->where(['uid'=>$uid])
+                    ->andWhere(['pid'=>$pid[$i]])
+                    ->one();
+
+                $list[$i]['pid'] = $pid[$i];
+                $list[$i]['score'] = $query1['grade'];
+                $list[$i]['fintime'] = $query1['fintime'];
+                $ctime = explode(':',$query1['ctime']);
+                $list[$i]['ctime'] = round($ctime[0]*60+$ctime[1]+$ctime[2]/60,2).'分钟';
+                $li = $this->ExamInfo($pid[$i])['data'];
+                $list[$i]['name'] = $li['name'];
+                $list[$i]['auth'] = $this->User($li['auth'])['username'];
+
+            }
+            return array('data'=>$list,'msg'=>'用户作答情况');
+        }
+        else
+        {
+            return array('data'=>$list,'msg'=>'该用户暂无作答情况');
+        }
+    }
+    /*
+     * 用户答题信息
+     */
+    public function Pracuser($uid,$pid)
+    {
+        return (new Query())
+            ->select('*')
+            ->from('pracuser')
+            ->where(['uid'=>$uid])
+            ->andWhere(['pid'=>$pid])
+            ->one();
+    }
+    /*
+     * 作答结果搜索
+     * 参数;name:uid
+     */
+    public function actionSearchans()
+    {
+        $request = \Yii::$app->request;
+        $name = $request->post('name');
+        $uid = $request->post('uid');
+        //数据列表
+        $list = [];
+        $n=0;
+        //已答的练习
+        $queryU = (new Query())
+            ->select('*')
+            ->from('pracuser')
+            ->where(['uid'=>$uid])
+            ->orderBy(['fintime'=>SORT_DESC])
+            ->all();
+        //练习id
+        $plist = array_merge(array_column($queryU,'pid'));
+        for($i=0;$i<count($plist);$i++)
+        {
+            //匹配试卷
+            $query = (new Query())
+                ->select('*')
+                ->from('prac')
+                ->where(['or',
+                    ['like','name',$name],
+                    ['like','createtime',$name]])
+                ->andWhere(['id'=>$plist[$i]])
+                ->orderBy(['createtime'=>SORT_DESC])
+                ->all();
+            for($j=0;$j<count($query);$j++)
+            {
+                //练习编号、名称、创建作者、状态
+                $list[$n]['pid'] = $query[$j]['id'];
+                $list[$n]['name'] = $query[$j]['name'];
+                $list[$n]['auth'] = $this->User($query[$j]['auth'])['username'];
+                $list[$n]['status'] = $query[$j]['status'];
+                $info = $this->Pracuser($uid,$query[$j]['id']);
+                $list[$n]['score'] = $info['grade'];
+                $ctime = explode(':',$info['ctime']);
+                $list[$n]['ctime'] = round($ctime[0]*60+$ctime[1]+$ctime[2]/60,2).'分钟';
+                $list[$n]['fintime'] = $info['fintime'];
+                $n++;
+            }
+
+        }
+        return array('data'=>$list,'msg'=>'搜索练习题列表');
     }
 }
