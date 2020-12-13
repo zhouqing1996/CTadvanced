@@ -42,6 +42,10 @@ return [
         'student' => [
             'class' => 'backend\module\student\Module',
         ],
+        //管理员相关
+        'admin'=>[
+            'class'=>'backend\module\admin\Module',
+        ]
     ],
     'components' => [
         // 'request' => [

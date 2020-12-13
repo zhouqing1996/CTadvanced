@@ -206,12 +206,14 @@ class PracticeController extends Controller
     {
         $request = \Yii::$app->request;
         $name = $request->post('name');
+        $uid = $request->post('uid');
         $query = (new Query())
             ->select('*')
             ->from('prac')
             ->where(['or',
                 ['like','name',$name],
                 ['like','createtime',$name]])
+            ->andWhere(['auth'=>$uid])
             ->orderBy(['createtime'=>SORT_DESC])
             ->all();
         return array('data'=>$query,'msg'=>'搜索结果');
