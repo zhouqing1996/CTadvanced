@@ -476,4 +476,236 @@ class PracticeController extends Controller
         ob_end_flush();
         return array('data'=>$url,'msg'=>'练习作答信息');
     }
+    /*
+     * 删除
+     * 参数：练习id
+     * 标志：1：删除，2恢复，3彻底删除
+     */
+    public function actionDeleteprac()
+    {
+        $request = \Yii::$app->request;
+        $pid = $request->post('pid');
+        $flag = $request->post('flag');
+        switch ($flag)
+        {
+            case 1:
+                $del = \Yii::$app->db->createCommand()->update('prac',['status'=>0],['id'=>$pid])->execute();
+                return array('data'=>$del,'msg'=>'删除');
+            case 2:
+                $del = \Yii::$app->db->createCommand()->update('prac',['status'=>1],['id'=>$pid])->execute();
+                return array('data'=>$del,'msg'=>'恢复');
+            case 3:
+                $del = \Yii::$app->db->createCommand()->delete('prac',['id'=>$pid])->execute();
+                return array('data'=>$del,'msg'=>'彻底删除');
+        }
+    }
+    /*
+     * 判断正误
+     */
+    public function Grade($g)
+    {
+        switch ($g)
+        {
+            case 1:
+                return '正确';
+            case 0:
+                return '错误';
+            default:
+                return '未知';
+        }
+    }
+    /*
+     * 题干信息
+     */
+    public function Item($type,$id)
+    {
+        switch ($type)
+        {
+            case 1:
+                $q = (new Query())
+                    ->select('*')
+                    ->from('chooseq')
+                    ->where(['cqid'=>$id])
+                    ->one();
+                return $q['cqitem'];
+            case 2:
+                $q = (new Query())
+                    ->select('*')
+                    ->from('fillq')
+                    ->where(['fqid'=>$id])
+                    ->one();
+                return $q['fqitem'];
+            case 3:
+                $q = (new Query())
+                    ->select('*')
+                    ->from('program')
+                    ->where(['pqid'=>$id])
+                    ->one();
+                return $q['pqitem'];
+            case 4:
+                $q = (new Query())
+                    ->select('*')
+                    ->from('choosem')
+                    ->where(['mqid'=>$id])
+                    ->one();
+                return $q['mqitem'];
+            case 5:
+                $q = (new Query())
+                    ->select('*')
+                    ->from('judge')
+                    ->where(['jqid'=>$id])
+                    ->one();
+                return $q['jqitem'];
+            default:
+                return '未知';
+        }
+    }
+    /*
+     * 下载练习信息
+     * 参数：练习id,标记：1，总体信息，2，详细信息
+     */
+    public function actionDown()
+    {
+        $request = \Yii::$app->request;
+        $pid = $request->post('pid');
+        $flag = $request->post('flag');
+        switch ($flag)
+        {
+            case 1:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('pracuser')
+                    ->where(['pid'=>$pid])
+                    ->all();
+                $list = [];
+                for($i=0;$i<count($query);$i++)
+                {
+                    $info = $this->Prac($pid);
+                    $list[$i]['name'] = $info['name'];
+                    $list[$i]['auth'] =$this->User($info['auth'])['username'];
+                    $list[$i]['score'] = $this->Score($pid);
+
+//                    $list[$i]['createtime'] = $this->Prac($pid)['createtime'];
+                    $list[$i]['stu'] =$this->User($query[$i]['uid'])['username'];
+                    $list[$i]['grade'] = $query[$i]['grade'];
+                    $list[$i]['ctime'] = $query[$i]['ctime'];
+                    $list[$i]['fintime'] = $query[$i]['fintime'];
+                    $list[$i]['status'] = $this->Status($query[$i]['status']);
+                }
+                $name ='练习总体信息';
+                $name = str_replace('/','_',$name);
+                $fileName = $name.'的作答信息';
+                //表头
+                $title = ['练习名称','练习作者','练习总分','作答学生','得分','作答用时','完成时间','状态'];
+                set_time_limit(0);
+                $spreadsheet = new Spreadsheet();
+                $worksheet = $spreadsheet->getActiveSheet();
+                //设置表标题
+                $worksheet->setTitle('练习总体信息');
+                //表头
+                foreach ($title as $key =>$value) {
+                    $worksheet->setCellValueByColumnAndRow($key+1,1,$value);
+                }
+                //从第二行开始插入数据
+                $row =2;
+                foreach ($list as $item)
+                {
+                    $column = 1;
+                    foreach ($item as $value)
+                    {
+                        $worksheet->setCellValueByColumnAndRow($column,$row,$value);
+                        $column++;
+                    }
+                    $row++;
+                }
+                ob_clean();
+                ob_start();
+                $writer = IOFactory::createWriter($spreadsheet,'Xlsx');
+                $this->excelBrowserExport($fileName,'Xlsx');
+                $path = \Yii::$app->basePath;
+                $xlsxPath = $path.'/files/xlsx/';
+                if(!is_dir($xlsxPath))
+                {
+                    mkdir(iconv('utf-8','GBK',$xlsxPath),0777,true);
+                }
+                $path=$xlsxPath.$fileName.'.xlsx';
+                ob_clean();
+                $url=explode('ComputeThinking',$path);
+                $url='http://127.0.0.1/ComputeThinking'.$url[1];
+                $writer->save($path);
+                $spreadsheet->disconnectWorksheets();
+                unset($spreadsheet);
+                ob_end_flush();
+                return array('data'=>$url,'msg'=>'练习总体信息');
+            case 2:
+                $query = (new Query())
+                    ->select('*')
+                    ->from('pracusertail')
+                    ->where(['pid'=>$pid])
+                    ->all();
+                $list = [];
+                for($i=0;$i<count($query);$i++)
+                {
+                    $info = $this->Prac($pid);
+                    $list[$i]['name'] = $info['name'];
+                    $list[$i]['auth'] =$this->User($info['auth'])['username'];
+                    $list[$i]['score'] = $this->Score($pid);
+                    $list[$i]['stu'] =$this->User($query[$i]['uid'])['username'];
+                    $list[$i]['item'] = $this->Item($query[$i]['qtypeid'],$query[$i]['qid']);
+                    $list[$i]['ans'] = $query[$i]['ans'];
+                    $list[$i]['grade'] = $this->Grade($query[$i]['grade']);
+                    $list[$i]['ctime'] = $query[$i]['ctime'];
+                    $list[$i]['fintime'] = $query[$i]['ftime'];
+                    $list[$i]['status'] = $this->Status($query[$i]['status']);
+                }
+                $name ='练习详细信息';
+                $name = str_replace('/','_',$name);
+                $fileName = $name.'的作答信息';
+                //表头
+                $title = ['练习名称','练习作者','练习总分','作答学生','题干','答案','结果判断','作答用时','完成时间','状态'];
+                set_time_limit(0);
+                $spreadsheet = new Spreadsheet();
+                $worksheet = $spreadsheet->getActiveSheet();
+                //设置表标题
+                $worksheet->setTitle('练习详细信息');
+                //表头
+                foreach ($title as $key =>$value) {
+                    $worksheet->setCellValueByColumnAndRow($key+1,1,$value);
+                }
+                //从第二行开始插入数据
+                $row =2;
+                foreach ($list as $item)
+                {
+                    $column = 1;
+                    foreach ($item as $value)
+                    {
+                        $worksheet->setCellValueByColumnAndRow($column,$row,$value);
+                        $column++;
+                    }
+                    $row++;
+                }
+                ob_clean();
+                ob_start();
+                $writer = IOFactory::createWriter($spreadsheet,'Xlsx');
+                $this->excelBrowserExport($fileName,'Xlsx');
+                $path = \Yii::$app->basePath;
+                $xlsxPath = $path.'/files/xlsx/';
+                if(!is_dir($xlsxPath))
+                {
+                    mkdir(iconv('utf-8','GBK',$xlsxPath),0777,true);
+                }
+                $path=$xlsxPath.$fileName.'.xlsx';
+                ob_clean();
+                $url=explode('ComputeThinking',$path);
+                $url='http://127.0.0.1/ComputeThinking'.$url[1];
+                $writer->save($path);
+                $spreadsheet->disconnectWorksheets();
+                unset($spreadsheet);
+                ob_end_flush();
+                return array('data'=>$url,'msg'=>'练习详细信息');
+            default:
+                return array('data'=>'','msg'=>'未知');
+
+        }
+    }
 }
