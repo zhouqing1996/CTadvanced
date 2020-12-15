@@ -126,7 +126,7 @@ class FillqController extends Controller
     {
         $requset = \Yii::$app->request;
         $id = $requset->post('fid');
-        $auth = $request->post('auth');
+        $auth = $requset->post('auth');
         $query = (new Query())
             ->select('*')
             ->from('fillq')
@@ -283,5 +283,35 @@ class FillqController extends Controller
             }
         }
         return array("data"=>$data,"msg"=>"导入成功");
+    }
+    /*
+     * 查找
+     */
+    public function actionInfo()
+    {
+        $request = \Yii::$app->request;
+        $id = $request->post('id');
+        $query = (new Query())
+            ->select('*')
+            ->from('fillq')
+            ->where(['fqid'=>$id])
+            ->one();
+        return array('data'=>$query,'msg'=>"填空题信息");
+    }
+    /*
+     * 更新
+     */
+    public function actionChangefill()
+    {
+        $request = \Yii::$app->request;
+        $item = $request->post('qitem');
+        $ans = $request->post('ans');
+        $tail = $request->post('tail');
+        $rem = $request->post('rem');
+        $auth = $request->post('auth');
+        $id = $request->post('id');
+        $update = \Yii::$app->db->createCommand()->update('fillq',['fqitem' => $item, 'fqans' => $ans, 'fqtail' => $tail,
+            'fqrem' => $rem, 'userid'=>$auth,],['fqid'=>$id])->execute();
+        return array('data'=>$update,'msg'=>'更新填空题');
     }
 }

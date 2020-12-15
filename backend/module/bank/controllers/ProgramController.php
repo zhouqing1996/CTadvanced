@@ -284,4 +284,35 @@ class ProgramController extends Controller
         }
         return array("data"=>$data,"msg"=>"导入成功");
     }
+    public function actionInfo()
+    {
+        $request = \Yii::$app->request;
+        $id = $request->post('id');
+        $query = (new Query())
+            ->select('*')
+            ->from('program')
+            ->where(['pqid'=>$id])
+            ->one();
+        return array('data'=>$query,'msg'=>"多选题信息");
+    }
+    public function actionChangeprogram()
+    {
+        $request = \Yii::$app->request;
+        $item = $request->post('qitem');
+        $ans = $request->post('ans');
+        $tail = $request->post('tail');
+        $rem = $request->post('rem');
+        $auth = $request->post('auth');
+        $id = $request->post('id');
+        $update = \Yii::$app->db->createCommand()->update('program',['pqitem' => $item, 'pqans' => $ans, 'pqtail' => $tail,
+            'pqrem' => $rem, 'userid'=>$auth,],['pqid'=>$id])->execute();
+        if($update)
+        {
+            return array('data'=>$update,'msg'=>'更新程序题');
+        }
+        else{
+            return array('data'=>$update,'msg'=>'更新程序题失败');
+        }
+
+    }
 }

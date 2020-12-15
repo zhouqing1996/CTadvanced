@@ -23,11 +23,45 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e9d69d1-ca5a-4f0c-90a7-011e8930b17b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/module/admin/controllers/EditerController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/download/3.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/files/download/3.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/files/xlsx/测试的作答信息.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/backend/files/xlsx/测试的作答信息.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/module/admin/controllers/PracticeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/admin/controllers/PracticeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214172504.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214172656.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214172915.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214173355.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214173454.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214173708.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214174744.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214175122.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214175730.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202001.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202014.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202025.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202034.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202048.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202101.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202122.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202137.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202146.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202153.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202204.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202228.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202237.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202246.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202254.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202301.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202320.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202326.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202332.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/blob20201214202339.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/logo20201214175709.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/logo20201214202110.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/logo20201214202211.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/files/images/logo20201214202220.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ChoosemController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ChoosemController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ChooseqController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ChooseqController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/FillqController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/FillqController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/JudgeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/JudgeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/module/bank/controllers/ProgramController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/module/bank/controllers/ProgramController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -248,7 +282,8 @@
       <workItem from="1607841580290" duration="12217000" />
       <workItem from="1607907446014" duration="5280000" />
       <workItem from="1607928733421" duration="36000" />
-      <workItem from="1607934840884" duration="1831000" />
+      <workItem from="1607934840884" duration="1833000" />
+      <workItem from="1607999134286" duration="5846000" />
     </task>
     <servers />
   </component>

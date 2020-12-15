@@ -284,4 +284,35 @@ class JudgeController extends Controller
         }
         return array("data"=>$data,"msg"=>"导入成功");
     }
+    public function actionInfo()
+    {
+        $request = \Yii::$app->request;
+        $id = $request->post('id');
+        $query = (new Query())
+            ->select('*')
+            ->from('judge')
+            ->where(['jqid'=>$id])
+            ->one();
+        return array('data'=>$query,'msg'=>"多选题信息");
+    }
+    public function actionChangejudge()
+    {
+        $request = \Yii::$app->request;
+        $item = $request->post('qitem');
+        $ans = $request->post('ans');
+        $tail = $request->post('tail');
+        $rem = $request->post('rem');
+        $auth = $request->post('auth');
+        $id = $request->post('id');
+        $update = \Yii::$app->db->createCommand()->update('judge',['jqitem' => $item, 'jqans' => $ans, 'jqtail' => $tail,
+            'jqrem' => $rem, 'userid'=>$auth,],['jqid'=>$id])->execute();
+        if($update)
+        {
+            return array('data'=>$update,'msg'=>'更新判断题');
+        }
+        else{
+            return array('data'=>$update,'msg'=>'更新判断题失败');
+        }
+
+    }
 }

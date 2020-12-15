@@ -448,4 +448,36 @@ class ChoosemController extends Controller
         }
         return array("data"=>$data,"msg"=>"导入成功");
     }
+    public function actionInfo()
+    {
+        $request = \Yii::$app->request;
+        $id = $request->post('id');
+        $query = (new Query())
+            ->select('*')
+            ->from('choosem')
+            ->where(['mqid'=>$id])
+            ->one();
+        return array('data'=>$query,'msg'=>"多选题信息");
+    }
+    /*
+     * 更新
+     */
+    public function actionChangechoosem()
+    {
+        $request = \Yii::$app->request;
+        $item = $request->post('qitem');
+        $op1 = $request->post('op1');
+        $op2 = $request->post('op2');
+        $op3 = $request->post('op3');
+        $op4 = $request->post('op4');
+        $op = $op1.'---'.$op2.'---'.$op3.'---'.$op4;
+        $ans = $request->post('ans');
+        $tail = $request->post('tail');
+        $rem=$request->post('rem');
+        $auth = $request->post('auth');
+        $id = $request->post('id');
+        $updata = \Yii::$app->db->createCommand()->update('choosem',['mqid'=>$id,'mqitem'=>$item,'mqcho'=>$op,'mqans'=>$ans,'mqtail'=>$tail,
+            'mqrem'=>$rem,'userid'=>$auth],['mqid'=>$id])->execute();
+        return array('data'=>$updata,'msg'=>'更新多选题');
+    }
 }

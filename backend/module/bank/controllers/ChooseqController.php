@@ -448,4 +448,36 @@ class ChooseqController extends Controller
         }
         return array("data"=>$data,"msg"=>"导入成功");
     }
+    public function actionInfo()
+    {
+        $request = \Yii::$app->request;
+        $id = $request->post('id');
+        $query = (new Query())
+            ->select('*')
+            ->from('chooseq')
+            ->where(['cqid'=>$id])
+            ->one();
+        return array('data'=>$query,'msg'=>"单选题信息");
+    }
+    /*
+     * 更新
+     */
+    public function actionChangechoose()
+    {
+        $request = \Yii::$app->request;
+        $item = $request->post('qitem');
+        $op1 = $request->post('op1');
+        $op2 = $request->post('op2');
+        $op3 = $request->post('op3');
+        $op4 = $request->post('op4');
+        $op = $op1.'---'.$op2.'---'.$op3.'---'.$op4;
+        $ans = $request->post('ans');
+        $tail = $request->post('tail');
+        $rem=$request->post('rem');
+        $auth = $request->post('auth');
+        $id = $request->post('id');
+        $updata = \Yii::$app->db->createCommand()->update('chooseq',['cqid'=>$id,'cqitem'=>$item,'cqcho'=>$op,'cqans'=>$ans,'cqtail'=>$tail,
+            'cqrem'=>$rem,'userid'=>$auth],['cqid'=>$id])->execute();
+        return array('data'=>$updata,'msg'=>'更新单选题');
+    }
 }
